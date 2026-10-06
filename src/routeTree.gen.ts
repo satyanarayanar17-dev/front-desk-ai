@@ -24,6 +24,7 @@ import { Route as TradesRouteImport } from './routes/trades'
 import { Route as DashboardCompaniesRouteImport } from './routes/dashboard.companies'
 import { Route as DashboardLeadsRouteImport } from './routes/dashboard.leads'
 import { Route as DashboardPilotsRouteImport } from './routes/dashboard.pilots'
+import { Route as EmployeeIndexRouteImport } from './routes/employee/index'
 import { Route as ManagerIndexRouteImport } from './routes/manager/index'
 import { Route as ManagerHistoryRouteImport } from './routes/manager/history'
 import { Route as ManagerSettingsRouteImport } from './routes/manager/settings'
@@ -105,6 +106,11 @@ const DashboardPilotsRoute = DashboardPilotsRouteImport.update({
   path: '/pilots',
   getParentRoute: () => DashboardRoute,
 } as any)
+const EmployeeIndexRoute = EmployeeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EmployeeRouteRoute,
+} as any)
 const ManagerIndexRoute = ManagerIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -133,7 +139,7 @@ const ApiPublicWebhooksVapiRoute = ApiPublicWebhooksVapiRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/employee': typeof EmployeeRouteRoute
+  '/employee': typeof EmployeeRouteRouteWithChildren
   '/manager': typeof ManagerRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
@@ -150,12 +156,12 @@ export interface FileRoutesByFullPath {
   '/manager/history': typeof ManagerHistoryRoute
   '/manager/settings': typeof ManagerSettingsRoute
   '/manager/team': typeof ManagerTeamRoute
+  '/employee/': typeof EmployeeIndexRoute
   '/manager/': typeof ManagerIndexRoute
   '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/employee': typeof EmployeeRouteRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/dental': typeof DentalRoute
@@ -171,13 +177,14 @@ export interface FileRoutesByTo {
   '/manager/history': typeof ManagerHistoryRoute
   '/manager/settings': typeof ManagerSettingsRoute
   '/manager/team': typeof ManagerTeamRoute
+  '/employee': typeof EmployeeIndexRoute
   '/manager': typeof ManagerIndexRoute
   '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/employee': typeof EmployeeRouteRoute
+  '/employee': typeof EmployeeRouteRouteWithChildren
   '/manager': typeof ManagerRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
@@ -194,6 +201,7 @@ export interface FileRoutesById {
   '/manager/history': typeof ManagerHistoryRoute
   '/manager/settings': typeof ManagerSettingsRoute
   '/manager/team': typeof ManagerTeamRoute
+  '/employee/': typeof EmployeeIndexRoute
   '/manager/': typeof ManagerIndexRoute
   '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
 }
@@ -218,12 +226,12 @@ export interface FileRouteTypes {
     | '/manager/history'
     | '/manager/settings'
     | '/manager/team'
+    | '/employee/'
     | '/manager/'
     | '/api/public/webhooks/vapi'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/employee'
     | '/dashboard'
     | '/demo'
     | '/dental'
@@ -239,6 +247,7 @@ export interface FileRouteTypes {
     | '/manager/history'
     | '/manager/settings'
     | '/manager/team'
+    | '/employee'
     | '/manager'
     | '/api/public/webhooks/vapi'
   id:
@@ -261,13 +270,14 @@ export interface FileRouteTypes {
     | '/manager/history'
     | '/manager/settings'
     | '/manager/team'
+    | '/employee/'
     | '/manager/'
     | '/api/public/webhooks/vapi'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  EmployeeRouteRoute: typeof EmployeeRouteRoute
+  EmployeeRouteRoute: typeof EmployeeRouteRouteWithChildren
   ManagerRouteRoute: typeof ManagerRouteRouteWithChildren
   DashboardRoute: typeof DashboardRouteWithChildren
   DemoRoute: typeof DemoRoute
@@ -388,6 +398,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPilotsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/employee/': {
+      id: '/employee/'
+      path: '/'
+      fullPath: '/employee/'
+      preLoaderRoute: typeof EmployeeIndexRouteImport
+      parentRoute: typeof EmployeeRouteRoute
+    }
     '/manager/': {
       id: '/manager/'
       path: '/'
@@ -426,6 +443,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface EmployeeRouteRouteChildren {
+  EmployeeIndexRoute: typeof EmployeeIndexRoute
+}
+
+const EmployeeRouteRouteChildren: EmployeeRouteRouteChildren = {
+  EmployeeIndexRoute: EmployeeIndexRoute,
+}
+
+const EmployeeRouteRouteWithChildren = EmployeeRouteRoute._addFileChildren(
+  EmployeeRouteRouteChildren,
+)
+
 interface ManagerRouteRouteChildren {
   ManagerHistoryRoute: typeof ManagerHistoryRoute
   ManagerSettingsRoute: typeof ManagerSettingsRoute
@@ -462,7 +491,7 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  EmployeeRouteRoute: EmployeeRouteRoute,
+  EmployeeRouteRoute: EmployeeRouteRouteWithChildren,
   ManagerRouteRoute: ManagerRouteRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
   DemoRoute: DemoRoute,
