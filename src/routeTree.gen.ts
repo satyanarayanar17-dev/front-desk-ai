@@ -21,6 +21,7 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TradesRouteImport } from './routes/trades'
+import { Route as ClientLoginRouteImport } from './routes/client/login'
 import { Route as DashboardCompaniesRouteImport } from './routes/dashboard.companies'
 import { Route as DashboardLeadsRouteImport } from './routes/dashboard.leads'
 import { Route as DashboardPilotsRouteImport } from './routes/dashboard.pilots'
@@ -29,6 +30,8 @@ import { Route as ManagerIndexRouteImport } from './routes/manager/index'
 import { Route as ManagerHistoryRouteImport } from './routes/manager/history'
 import { Route as ManagerSettingsRouteImport } from './routes/manager/settings'
 import { Route as ManagerTeamRouteImport } from './routes/manager/team'
+import { Route as OwnerDashboardRouteImport } from './routes/owner/dashboard'
+import { Route as OwnerLoginRouteImport } from './routes/owner/login'
 import { Route as ApiPublicWebhooksVapiRouteImport } from './routes/api/public/webhooks/vapi'
 
 const IndexRoute = IndexRouteImport.update({
@@ -91,6 +94,11 @@ const TradesRoute = TradesRouteImport.update({
   path: '/trades',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClientLoginRoute = ClientLoginRouteImport.update({
+  id: '/client/login',
+  path: '/client/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardCompaniesRoute = DashboardCompaniesRouteImport.update({
   id: '/companies',
   path: '/companies',
@@ -131,6 +139,16 @@ const ManagerTeamRoute = ManagerTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => ManagerRouteRoute,
 } as any)
+const OwnerDashboardRoute = OwnerDashboardRouteImport.update({
+  id: '/owner/dashboard',
+  path: '/owner/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OwnerLoginRoute = OwnerLoginRouteImport.update({
+  id: '/owner/login',
+  path: '/owner/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicWebhooksVapiRoute = ApiPublicWebhooksVapiRouteImport.update({
   id: '/api/public/webhooks/vapi',
   path: '/api/public/webhooks/vapi',
@@ -150,12 +168,15 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trades': typeof TradesRoute
+  '/client/login': typeof ClientLoginRoute
   '/dashboard/companies': typeof DashboardCompaniesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
   '/manager/history': typeof ManagerHistoryRoute
   '/manager/settings': typeof ManagerSettingsRoute
   '/manager/team': typeof ManagerTeamRoute
+  '/owner/dashboard': typeof OwnerDashboardRoute
+  '/owner/login': typeof OwnerLoginRoute
   '/employee/': typeof EmployeeIndexRoute
   '/manager/': typeof ManagerIndexRoute
   '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
@@ -171,12 +192,15 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trades': typeof TradesRoute
+  '/client/login': typeof ClientLoginRoute
   '/dashboard/companies': typeof DashboardCompaniesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
   '/manager/history': typeof ManagerHistoryRoute
   '/manager/settings': typeof ManagerSettingsRoute
   '/manager/team': typeof ManagerTeamRoute
+  '/owner/dashboard': typeof OwnerDashboardRoute
+  '/owner/login': typeof OwnerLoginRoute
   '/employee': typeof EmployeeIndexRoute
   '/manager': typeof ManagerIndexRoute
   '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
@@ -195,12 +219,15 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trades': typeof TradesRoute
+  '/client/login': typeof ClientLoginRoute
   '/dashboard/companies': typeof DashboardCompaniesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
   '/manager/history': typeof ManagerHistoryRoute
   '/manager/settings': typeof ManagerSettingsRoute
   '/manager/team': typeof ManagerTeamRoute
+  '/owner/dashboard': typeof OwnerDashboardRoute
+  '/owner/login': typeof OwnerLoginRoute
   '/employee/': typeof EmployeeIndexRoute
   '/manager/': typeof ManagerIndexRoute
   '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
@@ -220,12 +247,15 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/trades'
+    | '/client/login'
     | '/dashboard/companies'
     | '/dashboard/leads'
     | '/dashboard/pilots'
     | '/manager/history'
     | '/manager/settings'
     | '/manager/team'
+    | '/owner/dashboard'
+    | '/owner/login'
     | '/employee/'
     | '/manager/'
     | '/api/public/webhooks/vapi'
@@ -241,12 +271,15 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/trades'
+    | '/client/login'
     | '/dashboard/companies'
     | '/dashboard/leads'
     | '/dashboard/pilots'
     | '/manager/history'
     | '/manager/settings'
     | '/manager/team'
+    | '/owner/dashboard'
+    | '/owner/login'
     | '/employee'
     | '/manager'
     | '/api/public/webhooks/vapi'
@@ -264,12 +297,15 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/trades'
+    | '/client/login'
     | '/dashboard/companies'
     | '/dashboard/leads'
     | '/dashboard/pilots'
     | '/manager/history'
     | '/manager/settings'
     | '/manager/team'
+    | '/owner/dashboard'
+    | '/owner/login'
     | '/employee/'
     | '/manager/'
     | '/api/public/webhooks/vapi'
@@ -288,6 +324,9 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TradesRoute: typeof TradesRoute
+  ClientLoginRoute: typeof ClientLoginRoute
+  OwnerDashboardRoute: typeof OwnerDashboardRoute
+  OwnerLoginRoute: typeof OwnerLoginRoute
   ApiPublicWebhooksVapiRoute: typeof ApiPublicWebhooksVapiRoute
 }
 
@@ -377,6 +416,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TradesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/client/login': {
+      id: '/client/login'
+      path: '/client/login'
+      fullPath: '/client/login'
+      preLoaderRoute: typeof ClientLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/companies': {
       id: '/dashboard/companies'
       path: '/companies'
@@ -432,6 +478,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/manager/team'
       preLoaderRoute: typeof ManagerTeamRouteImport
       parentRoute: typeof ManagerRouteRoute
+    }
+    '/owner/dashboard': {
+      id: '/owner/dashboard'
+      path: '/owner/dashboard'
+      fullPath: '/owner/dashboard'
+      preLoaderRoute: typeof OwnerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/owner/login': {
+      id: '/owner/login'
+      path: '/owner/login'
+      fullPath: '/owner/login'
+      preLoaderRoute: typeof OwnerLoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/webhooks/vapi': {
       id: '/api/public/webhooks/vapi'
@@ -502,6 +562,9 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TradesRoute: TradesRoute,
+  ClientLoginRoute: ClientLoginRoute,
+  OwnerDashboardRoute: OwnerDashboardRoute,
+  OwnerLoginRoute: OwnerLoginRoute,
   ApiPublicWebhooksVapiRoute: ApiPublicWebhooksVapiRoute,
 }
 export const routeTree = rootRouteImport

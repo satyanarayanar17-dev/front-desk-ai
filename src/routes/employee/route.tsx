@@ -1,5 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { getSupabase } from "@/lib/supabase";
+import { activeMembership, getPortalAccess } from "@/lib/portal-access";
 
 export const Route = createFileRoute("/employee")({
   staticData: { sitemap: "exclude-subtree" },
@@ -16,18 +17,14 @@ export const Route = createFileRoute("/employee")({
     ],
   }),
   beforeLoad: async () => {
-    const { data } = await getSupabase().auth.getSession();
-    if (!data.session) throw redirect({ to: "/login" });
-    const userId = data.session.user.id;
-    const email = data.session.user.email ?? "";
-    const { data: mems } = await getSupabase()
-      .from("company_memberships")
-      .select("id, company_id, role, status")
-      .eq("user_id", userId)
-      .eq("status", "active");
-    const membership = (mems ?? [])[0];
-    if (!membership) throw redirect({ to: "/dashboard" });
-    return { email, userId, companyId: membership.company_id as string };
+    const access = await getPortalAccess();
+    if (!access) throw redirect({ to: "/client/login" });
+    const membership = activeMembership(access);
+    if (!membership) {
+      if (activeMembership(access)) throw redirect({ to: "/employee" });
+      throw redirect({ to: "/client/login" });
+    }
+    return { email: access.email, userId: access.userId, companyId: membership.company_id };
   },
   component: EmployeeLayout,
 });
@@ -37,7 +34,7 @@ function EmployeeLayout() {
   const navigate = useNavigate();
   const signOut = async () => {
     await getSupabase().auth.signOut();
-    navigate({ to: "/login", replace: true });
+    navigate({ to: "/client/login", replace: true });
   };
   return (
     <div className="min-h-screen bg-muted/40">
