@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useLiveTable } from "@/hooks/use-live-table";
 import { checkWebhookHealth } from "@/lib/health.functions";
-import { fmtTime, label, LEAD_STATUSES, URGENCIES, type Lead } from "@/lib/supabase";
+import { friendlyError, fmtTime, getSupabase, label, LEAD_STATUSES, URGENCIES, type Company, type Lead } from "@/lib/supabase";
 
 export const Route = createFileRoute("/dashboard/leads")({ staticData: { sitemap: false }, component: LeadsPage });
 
@@ -21,14 +20,19 @@ function Badge({ children, className }: { children: ReactNode; className: string
 
 function LeadsPage() {
   const { rows, loading, error, realtime, reload, updateStatus } = useLiveTable<Lead>("frontdesk_leads");
-  const health = useServerFn(checkWebhookHealth);
-  const healthQ = useQuery({ queryKey: ["webhook-health"], queryFn: () => health(), refetchInterval: 120_000 });
+  const healthQ = useQuery({ queryKey: ["webhook-health"], queryFn: () => checkWebhookHealth(), refetchInterval: 120_000 });
   const [q, setQ] = useState("");
   const [fu, setFu] = useState("");
   const [fs, setFs] = useState("");
   const [fc, setFc] = useState("");
+  const [fa, setFa] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [companies, setCompanies] = useState<Company[]>([]);
+
+  useEffect(() => {
+    getSupabase().from("companies").select("*").order("name").then(({ data }) => setCompanies((data ?? []) as Company[]));
+  }, []);
 
   const categories = useMemo(
     () => Array.from(new Set(rows.map((r) => r.service_category).filter(Boolean))) as string[],
@@ -38,17 +42,35 @@ function LeadsPage() {
     if (fu && r.urgency !== fu) return false;
     if (fs && (r.status ?? "new") !== fs) return false;
     if (fc && r.service_category !== fc) return false;
+    if (fa && (r.assignment_status ?? "unmatched") !== fa) return false;
     if (q) {
       const hay = [r.caller_name, r.caller_phone, r.postcode, r.issue_summary].join(" ").toLowerCase();
       if (!hay.includes(q.toLowerCase())) return false;
     }
     return true;
   });
+  const unmatchedCount = rows.filter((r) => (r.assignment_status ?? "unmatched") === "unmatched").length;
   const urgentCount = rows.filter((r) => r.urgency === "emergency" || r.urgency === "urgent_same_day" || r.status === "urgent").length;
   const callbackCount = rows.filter((r) => r.status === "callback_requested").length;
   const newest = rows[0]?.created_at;
   const open = rows.find((r) => r.id === openId);
   const sel = "rounded-md border border-input bg-card px-2.5 py-2 text-sm";
+
+  const assign = async (leadId: string, companyId: string) => {
+    setMsg(null);
+    const { data: user } = await getSupabase().auth.getUser();
+    const { error } = await getSupabase()
+      .from("frontdesk_leads")
+      .update({
+        company_id: companyId,
+        assignment_status: "assigned",
+        assigned_at: new Date().toISOString(),
+        assigned_by: user.user?.id ?? null,
+        match_reason: "assigned_by_owner",
+      })
+      .eq("id", leadId);
+    setMsg(error ? friendlyError(error) : "Lead assigned.");
+  };
 
   return (
     <div>
@@ -60,9 +82,9 @@ function LeadsPage() {
 
       <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
         <Stat title="Total leads" value={String(rows.length)} />
+        <Stat title="Held for review" value={String(unmatchedCount)} />
         <Stat title="Urgent / emergency" value={String(urgentCount)} />
         <Stat title="Callback requested" value={String(callbackCount)} />
-        <Stat title="Last lead received" value={fmtTime(newest)} />
         <Stat
           title="Webhook health"
           value={healthQ.isLoading ? "Checking…" : healthQ.data?.ok ? "Healthy" : "Unreachable"}
@@ -85,6 +107,11 @@ function LeadsPage() {
           <option value="">All categories</option>
           {categories.map((u) => <option key={u} value={u}>{label(u)}</option>)}
         </select>
+        <select value={fa} onChange={(e) => setFa(e.target.value)} className={sel} aria-label="Assignment">
+          <option value="">All assignments</option>
+          <option value="unmatched">Held for review</option>
+          <option value="assigned">Assigned</option>
+        </select>
       </div>
 
       {(error || msg) && <p className="mt-4 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">{error || msg}</p>}
@@ -103,6 +130,7 @@ function LeadsPage() {
                 <Badge className={urgencyClass(r.urgency)}>{label(r.urgency)}</Badge>
                 <span className="font-semibold">{r.caller_name || "Unknown caller"}</span>
                 <span className="text-sm text-muted-foreground">{r.caller_phone || "—"} · {r.postcode || "—"}</span>
+                {(r.assignment_status ?? "unmatched") === "unmatched" && <Badge className="bg-blush/40 text-brand-ink">Held for review</Badge>}
                 <span className="ml-auto text-xs text-muted-foreground">{fmtTime(r.created_at)}</span>
               </div>
               <p className="mt-1.5 line-clamp-2 text-sm">{r.issue_summary || "No issue summary"}</p>
@@ -123,9 +151,28 @@ function LeadsPage() {
               <div className="flex-1">
                 <Badge className={urgencyClass(open.urgency)}>{label(open.urgency)}</Badge>
                 <h2 className="mt-2 text-lg font-semibold">{open.caller_name || "Unknown caller"}</h2>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {(open.assignment_status ?? "unmatched") === "unmatched" ? "Held for review — not yet routed to a company." : "Routed to a company."}
+                  {open.match_reason ? ` (${open.match_reason})` : ""}
+                </p>
               </div>
               <button onClick={() => setOpenId(null)} className="rounded-md border border-border px-2.5 py-1 text-sm">Close</button>
             </div>
+
+            {(open.assignment_status ?? "unmatched") === "unmatched" && (
+              <label className="mt-4 block text-xs font-medium text-muted-foreground">
+                Route to company
+                <select
+                  value=""
+                  onChange={(e) => e.target.value && assign(open.id, e.target.value)}
+                  className={`${sel} mt-1 block w-full`}
+                >
+                  <option value="">Choose a company…</option>
+                  {companies.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </label>
+            )}
+
             <label className="mt-4 block text-xs font-medium text-muted-foreground">
               Status
               <select
