@@ -80,9 +80,19 @@ export const Route = createFileRoute("/api/public/webhooks/vapi")({
           return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { "Content-Type": "application/json" } });
         }
 
-        const vapiCallId = str(get(body, ["call", "id"])) ?? str(get(body, ["id"]));
-        const eventType = str(get(body, ["type"])) ?? str(get(body, ["message", "type"]));
-        const assistantId = str(get(body, ["assistant", "id"])) ?? str(get(body, ["assistantId"])) ?? str(get(body, ["call", "assistantId"]));
+        // Vapi nests details under `message`; merge it with the top level so
+        // both flat and nested event shapes resolve the same way.
+        const raw = body as AnyRecord;
+        const msg = (raw["message"] && typeof raw["message"] === "object" ? raw["message"] : {}) as AnyRecord;
+        const payload: AnyRecord = {
+          ...msg,
+          ...raw,
+          call: { ...((msg["call"] as AnyRecord) ?? {}), ...((raw["call"] as AnyRecord) ?? {}) },
+          customer: { ...((msg["customer"] as AnyRecord) ?? {}), ...((raw["customer"] as AnyRecord) ?? {}) },
+        };
+        const vapiCallId = str(get(payload, ["call", "id"])) ?? str(get(payload, ["id"]));
+        const eventType = str(get(payload, ["type"])) ?? str(get(payload, ["message", "type"]));
+        const assistantId = str(get(payload, ["assistant", "id"])) ?? str(get(payload, ["assistantId"])) ?? str(get(payload, ["call", "assistantId"]));
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
