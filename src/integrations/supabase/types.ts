@@ -525,7 +525,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_my_portal_access: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "platform_owner" | "manager" | "employee"
