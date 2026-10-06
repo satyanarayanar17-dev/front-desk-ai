@@ -349,7 +349,7 @@ export function PilotForm({ source = "home", buttonText = "Start a 7-day pilot",
         {submitting ? "Sending…" : buttonText}
       </Button>
       <p className="mt-3 text-xs text-muted-foreground">
-         {kind === "pilot" ? "Pilot offer: £0 setup and a free 7-day pilot. Indicative plans start at £149/month afterwards. No payment is taken on this website." : "We’ll contact you to arrange a demo tailored to your business. No public demo number is available on this page."}
+         {kind === "pilot" ? "Pilot offer: £0 setup and a 7-day pilot. Indicative plans start at £149/month afterwards. No payment is taken on this website." : "We’ll contact you to arrange a demo tailored to your business. No public demo number is available on this page."}
       </p>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
         By submitting, you’re asking Callwoven to contact you about this request. Read our{" "}

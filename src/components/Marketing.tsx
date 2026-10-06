@@ -25,7 +25,48 @@ export function ListeningPreview() {
   return <div className="relative mx-auto w-full max-w-[510px] pb-16 pt-10 sm:pb-20"><p className="absolute right-2 top-0 -rotate-3 text-xs italic text-muted-foreground">↙ &nbsp; Illustrative demo</p><div className="relative ml-auto w-[88%] rotate-[3deg] rounded-[22px] border border-background/80 bg-card/95 px-6 py-8 text-center shadow-[0_24px_60px_-28px_color-mix(in_oklab,var(--brand-ink)_28%,transparent)] sm:px-10 sm:py-10"><div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-blush/75"><Phone className="h-7 w-7" aria-hidden="true"/></div><div className="mx-auto mt-7 flex h-14 items-center justify-center gap-1" aria-hidden="true">{bars.map((height, i) => <span key={`${height}-${i}`} className="w-1 rounded-full bg-foreground" style={{ height }}/>)}</div><p className="mt-6 text-lg font-bold">Callwoven is listening</p><p className="mt-1 text-sm text-muted-foreground">New patient enquiry</p></div><div className="absolute bottom-0 right-0 w-[78%] rounded-2xl border border-border bg-card p-5 shadow-[0_18px_50px_-25px_color-mix(in_oklab,var(--brand-ink)_25%,transparent)] sm:w-[70%]"><div className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3"><div className="row-span-3 grid h-11 w-11 place-items-center rounded-full bg-powder"><ClipboardList className="h-5 w-5" aria-hidden="true"/></div><p className="font-bold">Call summary</p><p className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground"><UserRound className="h-4 w-4 shrink-0"/>New patient · Check-up enquiry</p><p className="flex items-center gap-2 text-xs text-muted-foreground"><Phone className="h-4 w-4 shrink-0"/>Callback requested</p></div></div></div>;
 }
 
-export function NextSteps() { const cards = [{ icon: Phone, tone: "bg-blush/70", title: "Answer the call", text: "Callwoven responds using the information your business has approved." }, { icon: ClipboardList, tone: "bg-powder", title: "Capture the details", text: "Key information is gathered and organised for your team to review." }, { icon: UsersRound, tone: "bg-blush/70", title: "Keep your team informed", text: "A structured summary gives your team a clear next step for follow-up." }]; return <section className="bg-warm py-16 sm:py-20"><div className="mx-auto max-w-7xl px-5 sm:px-8"><h2 className="text-center text-4xl font-semibold leading-tight sm:text-5xl">A calmer front desk. A clearer next step.</h2><div className="mt-10 grid gap-4 md:grid-cols-3">{cards.map(({icon: Icon, tone, title, text}) => <article key={title} className="grid grid-cols-[auto_minmax(0,1fr)] gap-5 rounded-xl border border-border bg-background/50 p-6 sm:p-7"><div className={`grid h-14 w-14 shrink-0 place-items-center rounded-full ${tone}`}><Icon className="h-6 w-6" aria-hidden="true"/></div><div className="min-w-0"><h3 className="font-sans text-lg font-bold">{title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p></div></article>)}</div></div></section>; }
+export function NextSteps() {
+  const cards = [
+    {
+      icon: Phone,
+      tone: "bg-blush/70",
+      title: "1. A customer calls",
+      text: "When your team is busy or unavailable, overflow and after-hours calls route smoothly to Callwoven."
+    },
+    {
+      icon: ClipboardList,
+      tone: "bg-powder",
+      title: "2. Callwoven answers & captures",
+      text: "It introduces itself as an automated receptionist, answers approved routine questions, and captures clear enquiry details."
+    },
+    {
+      icon: UsersRound,
+      tone: "bg-blush/70",
+      title: "3. Your team follows up",
+      text: "Your team reviews the structured enquiry in the portal, assigns follow-up, and completes the callback or booking."
+    }
+  ];
+  return (
+    <section className="bg-warm py-16 sm:py-20">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <h2 className="text-center text-4xl font-semibold leading-tight sm:text-5xl">How Callwoven works</h2>
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {cards.map(({ icon: Icon, tone, title, text }) => (
+            <article key={title} className="grid grid-cols-[auto_minmax(0,1fr)] gap-5 rounded-xl border border-border bg-background/50 p-6 sm:p-7">
+              <div className={`grid h-14 w-14 shrink-0 place-items-center rounded-full ${tone}`}>
+                <Icon className="h-6 w-6" aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-sans text-lg font-bold">{title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export function LeadPreview() { return <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-lg"><div className="flex items-center justify-between border-b border-border pb-4"><div><p className="text-xs font-bold uppercase tracking-[0.1em] text-brand">Illustrative lead</p><p className="mt-1 font-sans font-bold">New enquiry captured</p></div><span className="rounded-full bg-destructive/10 px-2.5 py-1 text-xs font-bold text-destructive">URGENT</span></div><dl className="mt-5 space-y-4 text-sm">{[["Caller", "Mrs D. Whitfield"], ["Phone", "07••• ••• 214"], ["Postcode", "LS15 8••"], ["Issue", "Boiler leaking; no hot water"], ["Next step", "Priority callback requested"]].map(([k,v]) => <div key={k} className="grid grid-cols-[90px_minmax(0,1fr)] gap-3"><dt className="text-muted-foreground">{k}</dt><dd className="font-semibold">{v}</dd></div>)}</dl><p className="mt-6 border-t border-border pt-4 text-xs text-muted-foreground">Fictional example — not a real customer record.</p></div>; }
 
@@ -33,5 +74,5 @@ export function DemoPanel({ vertical, prompts, note, primary = false }: { vertic
 export const DENTAL_PROMPTS = ["Are you accepting new patients?", "I'd like a cosmetic consultation.", "Can I request an appointment next Tuesday afternoon?", "What time do you close?", "I have a clinical question."];
 export const DENTAL_PROMPT_NOTE = <>For clinical questions, Callwoven defers to people: it takes a callback request for the practice team rather than giving an answer.</>;
 export const TRADES_PROMPTS = ["There's water leaking under my boiler.", "Can I get a quote for a new radiator?", "Could someone call me back this afternoon?", "Do you cover my area?"];
-export function RequestSection({ title, source, kind = "pilot", buttonText, intro }: { title: string; source: "home" | "dental" | "trades" | "demo"; kind?: "pilot" | "demo"; buttonText?: string; intro?: string }) { return <section className="border-t border-border bg-powder/25 py-16 sm:py-24"><div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-2"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-brand">{kind === "demo" ? "Arrange a demo" : "7-day pilot"}</p><h2 className="mt-4 max-w-lg text-4xl font-semibold leading-[1.05] sm:text-5xl">{title}</h2><p className="mt-5 max-w-md leading-relaxed text-muted-foreground">{intro ?? (kind === "demo" ? "Tell us about your business and we'll contact you to arrange a tailored demo." : "Tell us about your business to discuss a free 7-day pilot tailored to your calls. We'll agree the setup, safeguards, pricing and service terms before any calls are connected.")}</p></div><div className="min-w-0 max-w-2xl"><PilotFormBridge source={source} kind={kind} buttonText={buttonText}/></div></div></section>; }
+export function RequestSection({ title, source, kind = "pilot", buttonText, intro }: { title: string; source: "home" | "dental" | "trades" | "demo"; kind?: "pilot" | "demo"; buttonText?: string; intro?: string }) { return <section className="border-t border-border bg-powder/25 py-16 sm:py-24"><div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-2"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-brand">{kind === "demo" ? "Arrange a demo" : "7-day pilot"}</p><h2 className="mt-4 max-w-lg text-4xl font-semibold leading-[1.05] sm:text-5xl">{title}</h2><p className="mt-5 max-w-md leading-relaxed text-muted-foreground">{intro ?? (kind === "demo" ? "Tell us about your business and we'll contact you to arrange a tailored demo." : "Tell us about your business to discuss a 7-day pilot tailored to your calls. We'll agree the setup, safeguards, pricing and service terms before any calls are connected.")}</p></div><div className="min-w-0 max-w-2xl"><PilotFormBridge source={source} kind={kind} buttonText={buttonText}/></div></div></section>; }
 export function pageHead(title: string, description: string) { return { meta: [{ title }, { name: "description", content: description }, { property: "og:title", content: title }, { property: "og:description", content: description }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }; }
