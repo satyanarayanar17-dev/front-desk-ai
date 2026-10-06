@@ -6,7 +6,7 @@ import { PilotForm as PilotFormBridge } from "@/components/PilotForm";
 import { DEMO_NUMBERS } from "@/lib/demo-config";
 
 export function Mark({ descriptor }: { descriptor?: string | undefined }) {
-  return <span className="inline-flex min-w-0 items-center gap-2.5"><svg viewBox="0 0 44 44" className="h-9 w-9 shrink-0" role="img" aria-label="Callwoven woven mark"><path d="M12 8c-5 0-8 3-8 8 0 3 2 5 5 8l13 12c3 3 8 2 10-1 2-3 1-7-2-10L17 12c-2-2-3-4-5-4Z" fill="none" className="stroke-blush" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/><path d="M32 8c5 0 8 3 8 8 0 3-2 5-5 8L22 36c-3 3-8 2-10-1-2-3-1-7 2-10l13-13c2-2 3-4 5-4Z" fill="none" className="stroke-powder" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/></svg><span className="flex min-w-0 flex-col leading-none"><strong className="font-display text-[28px] font-semibold leading-none">callwoven</strong>{descriptor && <span className="mt-1 text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{descriptor}</span>}</span></span>;
+  return <span className="inline-flex min-w-0 flex-col items-start gap-1"><img src="/brand/callwoven-logo.png" alt="CallWoven — Automated Reception" width={1000} height={248} className="h-auto w-[180px] max-w-full sm:w-[200px]" />{descriptor && <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{descriptor}</span>}</span>;
 }
 
 const nav = [{ label: "Dental", to: "/dental" }, { label: "Trades", to: "/trades" }, { label: "How it works", to: "/how-it-works" }, { label: "Pricing", to: "/pricing" }, { label: "Client login", to: "/client/login" }] as const;

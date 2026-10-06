@@ -50,9 +50,9 @@ export function PageTransition({ children }: { children: ReactNode }) {
           <span className="sr-only">Loading page</span>
           <div className="callwoven-transition-loader" aria-hidden="true">
             <div className="callwoven-transition-ring" />
-            <div className="callwoven-transition-mark"><span /><span /></div>
+            <img src="/brand/callwoven-icon.png" alt="" className="callwoven-transition-mark" width={256} height={239} />
           </div>
-          <div className="callwoven-transition-wordmark" aria-hidden="true">Callwoven</div>
+          <div className="callwoven-transition-wordmark" aria-hidden="true">CallWoven</div>
         </div>
       )}
     </>
