@@ -3,8 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 /**
  * Vapi call webhook — updated for the multi-company platform.
  *
- * - Verifies the caller secret (header `x-vapi-secret`) when the shared
- *   secret is configured.
+ * - Requires and verifies the configured caller secret (header `x-vapi-secret`).
  * - Skips duplicate call events (same Vapi call id).
  * - Maps each call to a company via its assistant id or inbound phone
  *   number; unmapped calls are held for review and visible only to the
@@ -62,7 +61,7 @@ export const Route = createFileRoute("/api/public/webhooks/vapi")({
     handlers: {
       GET: async () => new Response(JSON.stringify({ ok: true, service: "vapi-webhook" }), { headers: { "Content-Type": "application/json" } }),
       POST: async ({ request }) => {
-        // Verify the shared secret when configured.
+        // Never accept writes when authentication is not configured.
         const expectedSecret = process.env["VAPI_WEBHOOK_SECRET"];
         if (expectedSecret) {
           const provided = request.headers.get("x-vapi-secret") ?? "";
@@ -70,7 +69,7 @@ export const Route = createFileRoute("/api/public/webhooks/vapi")({
             return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
           }
         } else {
-          console.warn("vapi-webhook: VAPI_WEBHOOK_SECRET is not configured; accepting request without verification");
+          return new Response(JSON.stringify({ error: "Webhook authentication is not configured" }), { status: 503, headers: { "Content-Type": "application/json" } });
         }
 
         let body: unknown;

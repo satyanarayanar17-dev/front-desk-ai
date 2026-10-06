@@ -25,6 +25,8 @@ const copy: Record<Kind, { title: string; intro: string; descriptor: string }> =
 export function PortalLogin({ kind }: { kind: Kind }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [forgot, setForgot] = useState(false);
   const [state, setState] = useState<"checking" | "idle" | "sending" | "sent" | "denied">("checking");
   const [error, setError] = useState<string | null>(null);
   const [denied, setDenied] = useState("");
@@ -37,7 +39,7 @@ export function PortalLogin({ kind }: { kind: Kind }) {
         if (!alive) return;
         if (!access) return setState("idle");
         const dest = portalDestination(access);
-        const fits = kind === "any" || (kind === "owner" ? dest === "/owner/dashboard" : dest === "/manager" || dest === "/employee");
+        const fits = dest === "/change-password" || kind === "any" || (kind === "owner" ? dest === "/owner/dashboard" : dest === "/manager" || dest === "/employee");
         if (dest && fits) return void navigate({ to: dest, replace: true });
         setDenied(
           kind === "owner"
@@ -61,23 +63,35 @@ export function PortalLogin({ kind }: { kind: Kind }) {
     if (state === "sending") return;
     setError(null);
     setState("sending");
-    const path = kind === "owner" ? "/owner/login" : kind === "client" ? "/client/login" : "/login";
-    const { error } = await getSupabase().auth.signInWithOtp({
-      email: email.trim().toLowerCase(),
-      // No public account creation: only existing owners and invited members can sign in.
-      options: { emailRedirectTo: `${window.location.origin}${path}`, shouldCreateUser: false },
-    });
-    if (error) { setError(friendlyError(error)); setState("idle"); } else setState("sent");
+    try {
+      const sb = getSupabase();
+      if (forgot) {
+        const { error } = await sb.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+          redirectTo: `${window.location.origin}/dashboard/leads`,
+        });
+        if (error) throw error;
+        setState("sent");
+      } else {
+        const { error } = await sb.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
+        if (error) { setError("Email or password is incorrect, or sign-in is temporarily unavailable."); setState("idle"); return; }
+        const access = await getPortalAccess();
+        const dest = access && portalDestination(access);
+        const fits = dest === "/change-password" || kind === "any" || (kind === "owner" ? access?.isOwner : !access?.isOwner);
+        if (dest && fits) { setPassword(""); await navigate({ to: dest, replace: true }); }
+        else { await sb.auth.signOut(); setPassword(""); setError("This account does not have access to this portal."); setState("idle"); }
+      }
+    } catch (error) { setError(friendlyError(error)); setState("idle"); }
+
   };
 
-  const signOut = async () => { await getSupabase().auth.signOut(); setState("idle"); setDenied(""); };
+  const signOut = async () => { await getSupabase().auth.signOut(); sessionStorage.removeItem("callwoven-password-recovery"); setState("idle"); setDenied(""); };
   const c = copy[kind];
 
   return (
     <div className="callwoven-hero flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm rounded-2xl border border-background/80 bg-card/95 p-8 shadow-xl">
         <Link to="/" aria-label="Callwoven home"><Mark descriptor={c.descriptor} /></Link>
-        <h1 className="mt-6 text-xl font-semibold">{c.title}</h1>
+        <h1 className="mt-6 text-xl font-semibold">{forgot ? "Reset your password" : c.title}</h1>
         {state === "checking" ? <SmallLoader /> : state === "denied" ? (
           <div className="mt-3 space-y-4" role="alert">
             <p className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"><strong>Access denied.</strong> {denied}</p>
@@ -87,14 +101,17 @@ export function PortalLogin({ kind }: { kind: Kind }) {
             </div>
           </div>
         ) : state === "sent" ? (
-          <p className="mt-3 text-sm text-muted-foreground">If <strong className="text-foreground">{email}</strong> has access, a sign-in link is on its way.</p>
+          <div className="mt-3 space-y-4"><p className="text-sm text-muted-foreground">If an account exists for <strong className="text-foreground">{email}</strong>, you’ll receive a password reset link.</p><Button variant="outline" onClick={() => { setForgot(false); setState("idle"); }}>Back to login</Button></div>
         ) : (
           <form onSubmit={submit} className="mt-4 space-y-3">
-            <p className="text-sm text-muted-foreground">{c.intro} We'll email you a one-time sign-in link.</p>
-            <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com"
+            <p className="text-sm text-muted-foreground">{forgot ? "Enter your login email to request a password reset link." : c.intro + " Sign in with your email and password."}</p>
+            <label className="block text-sm font-medium" htmlFor="login-email">Email</label>
+            <input id="login-email" aria-label="Email address" type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com"
               className="w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30" />
+            {!forgot && <><label className="block text-sm font-medium" htmlFor="login-password">Password</label><input id="login-password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring/30" /></>}
             {error && <p className="text-xs text-destructive" role="alert">{error}</p>}
-            <Button type="submit" disabled={state === "sending"} className="h-11 w-full rounded-full">{state === "sending" ? "Sending…" : "Send sign-in link"}</Button>
+            <Button type="submit" disabled={state === "sending"} className="h-11 w-full rounded-full">{state === "sending" ? (forgot ? "Sending…" : "Signing in…") : (forgot ? "Send reset link" : "Log in")}</Button>
+            <button type="button" disabled={state === "sending"} className="block text-sm underline underline-offset-4 text-muted-foreground" onClick={() => { setForgot(!forgot); setError(null); setPassword(""); }}>{forgot ? "Back to login" : "Forgot password?"}</button>
           </form>
         )}
       </div>

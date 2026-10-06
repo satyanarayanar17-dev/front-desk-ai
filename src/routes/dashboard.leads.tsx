@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useLiveTable } from "@/hooks/use-live-table";
@@ -20,7 +21,8 @@ function Badge({ children, className }: { children: ReactNode; className: string
 
 function LeadsPage() {
   const { rows, loading, error, realtime, reload, updateStatus } = useLiveTable<Lead>("frontdesk_leads");
-  const healthQ = useQuery({ queryKey: ["webhook-health"], queryFn: () => checkWebhookHealth(), refetchInterval: 120_000 });
+  const health = useServerFn(checkWebhookHealth);
+  const healthQ = useQuery({ queryKey: ["webhook-health"], queryFn: () => health(), refetchInterval: 120_000 });
   const [q, setQ] = useState("");
   const [fu, setFu] = useState("");
   const [fs, setFs] = useState("");

@@ -1,13 +1,10 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// App data lives in Lovable Cloud. The generated client below carries the
-// publishable key and the user's session; data access is enforced by
-// Row Level Security in the database.
-export const SUPABASE_URL = import.meta.env["VITE_SUPABASE_URL"] as string;
-export const SUPABASE_PUBLISHABLE_KEY = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string;
-export const WEBHOOK_HEALTH_URL = "/api/public/webhooks/vapi";
+// Browser-safe config only. Publishable key is intended for client use; data
+// access is enforced by Supabase Auth + Row Level Security.
+export const SUPABASE_URL = "https://gtlfkvsqkxyktxqjgrbs.supabase.co";
+export const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ZZ8QYI8tGNEunG8f6UlvVA_DkbP-iED";
+export const WEBHOOK_HEALTH_URL = `${SUPABASE_URL}/functions/v1/vapi-webhook`;
 
 // UI-only pre-check. Real security is RLS.
 export const OWNER_EMAILS = [
@@ -17,16 +14,29 @@ export const OWNER_EMAILS = [
 export const isOwnerEmail = (email?: string | null) =>
   !!email && OWNER_EMAILS.includes(email.trim().toLowerCase());
 
-// Loosely typed: portal tables may not yet exist in the linked project's generated types.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getSupabase(): SupabaseClient<any> {
-  return supabase as unknown as SupabaseClient<any>;
+let client: SupabaseClient | undefined;
+
+export function getSupabase(): SupabaseClient {
+  if (!client) {
+    const isBrowser = typeof window !== "undefined";
+    if (isBrowser && new URLSearchParams(window.location.hash.slice(1)).get("type") === "recovery") {
+      window.sessionStorage.setItem("callwoven-password-recovery", "1");
+    }
+    client = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: {
+        persistSession: isBrowser,
+        autoRefreshToken: isBrowser,
+        detectSessionInUrl: isBrowser,
+      },
+    });
+  }
+  return client;
 }
 
 export function friendlyError(err: unknown): string {
   const msg = (err as { message?: string })?.message ?? "";
   if (/fetch|network/i.test(msg)) return "Couldn't reach the server. Check your connection and try again.";
-  if (/rate limit/i.test(msg)) return "Too many attempts. Please wait a minute and try again.";
+  if (/rate limit/i.test(msg)) return "Sign-in email limit reached. Wait before retrying; delivery may require a longer cooldown.";
   if (/permission|row-level|rls|401|403|JWT/i.test(msg)) return "You don't have permission to do that.";
   return "Something went wrong. Please try again.";
 }
@@ -68,6 +78,7 @@ export type Lead = {
   status: string | null;
   raw_payload: unknown;
   company_id: string | null;
+  assigned_employee_id: string | null;
   assignment_status: string;
   assigned_by: string | null;
   assigned_at: string | null;

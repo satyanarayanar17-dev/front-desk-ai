@@ -28,6 +28,11 @@ describe("App routing", () => {
     }
   });
 
+  it("serves both logins and password replacement", () => {
+    for (const path of ["/owner/login", "/client/login", "/change-password"]) {
+      expect(router.matchRoutes(path).at(-1)?.routeId, path).not.toBe(rootRouteId);
+    }
+  });
   it("serves the call webhook route", () => {
     const matches = router.matchRoutes("/api/public/webhooks/vapi");
     expect(matches.at(-1)?.routeId, "/api/public/webhooks/vapi").not.toBe(rootRouteId);

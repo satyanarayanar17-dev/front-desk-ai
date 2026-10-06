@@ -1,18 +1,18 @@
-# Roadmap
+# Callwoven roadmap
 
-## Client portal & platform-owner experience (current work)
-- [x] Fresh Lovable Cloud schema mirroring frontdesk_* identifiers, portal tables, roles, RLS, triggers, realtime.
-- [x] Owner dashboard: leads, pilots, companies (create, settings, seat limit, features, assistant/phone mapping).
-- [x] Manager portal: calls, team, settings, history.
-- [x] Employee portal: calls, notes, status updates.
-- [x] Vapi call webhook route: secret check, duplicate skip, company mapping, unmatched review.
-- [x] Build + typecheck clean, routing tests pass.
-- [ ] Signed-in end-to-end verification — blocked: backend has no auth users yet; someone must sign up via the login page first.
+## Implemented and published on callwoven.com
+- [x] Approved blush/powder-blue design and smaller animated page-transition logo.
+- [x] Separate owner and client email/password login, Forgot password, and Change password.
+- [x] Owner-created manager/employee logins with temporary credentials and backend-enforced password replacement.
+- [x] Company controls: employee limits, features, assistant and phone mapping.
+- [x] Managers assign calls to employees; employees see only assigned calls.
+- [x] Transcript analysis via direct OpenAI: reviewed summary, follow-up actions, needs, urgency, budget and timeline.
+- [x] Tenant isolation, owner-controlled settings, seat enforcement, and change history.
+- [x] Build/type checks and rollback database authorization checks.
 
-## Follow-ups
-- [ ] Configure Vapi webhook secret (VAPI_WEBHOOK_SECRET) when the user provides it.
-- [ ] Email sending for invitations/magic links — requires a transactional sender to be set up.
-- [x] Separate owner (/owner/login) and client (/client/login) sign-in with backend role checks
-- [ ] Signed-in browser test of portals (blocked: magic-link email delivery needs a sender)
-- [ ] Per-employee enquiry assignment (employees currently see all their company's calls)
-- [ ] Record company/settings/team changes in change history (only call changes are recorded today)
+## Remaining setup
+- [ ] Set OPENAI_API_KEY as a server-only runtime secret.
+- [ ] Configure custom SMTP for external client password-reset delivery.
+- [ ] Run real signed-in onboarding and recovery end-to-end checks after sender setup.
+
+See PORTAL-INTEGRATION.md for database migration provenance, validation and limitations. Existing records and production Vapi routing are preserved.

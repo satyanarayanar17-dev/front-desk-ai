@@ -1,3 +1,4 @@
+import { TranscriptAnalysis } from "@/components/TranscriptAnalysis";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { useLiveTable } from "@/hooks/use-live-table";
@@ -17,8 +18,8 @@ function Badge({ children, className }: { children: ReactNode; className: string
 }
 
 function EmployeeCalls() {
-  const { companyId } = Route.useRouteContext();
-  const { rows, loading, error, realtime, reload, updateStatus } = useLiveTable<Lead>("frontdesk_leads");
+  const { companyId, userId } = Route.useRouteContext();
+  const { rows, loading, error, realtime, reload, updateStatus } = useLiveTable<Lead>("frontdesk_leads", { companyId, employeeId: userId });
   const [notes, setNotes] = useState<EnquiryNote[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
@@ -61,7 +62,7 @@ function EmployeeCalls() {
   };
 
   const filtered = rows.filter((r) => {
-    if (r.company_id !== companyId) return false;
+    if (r.company_id !== companyId || r.assigned_employee_id !== userId) return false;
     if (q) {
       const hay = [r.caller_name, r.caller_phone, r.postcode, r.issue_summary].join(" ").toLowerCase();
       if (!hay.includes(q.toLowerCase())) return false;
@@ -72,7 +73,7 @@ function EmployeeCalls() {
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-xl font-semibold">Calls</h1>
+        <h1 className="text-xl font-semibold">Assigned calls</h1>
         <span className="text-xs text-muted-foreground">{realtime ? "Live updates on" : "Auto-refresh every 30s"}</span>
         <button onClick={reload} className="ml-auto rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-muted">Refresh</button>
       </div>
@@ -87,7 +88,7 @@ function EmployeeCalls() {
         <div className="mt-5 space-y-3">{[0, 1, 2].map((i) => <div key={i} className="h-20 animate-pulse rounded-xl bg-card" />)}</div>
       ) : filtered.length === 0 ? (
         <div className="mt-5 rounded-2xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">
-          {rows.length === 0 ? "No calls captured for your company yet." : "No calls match this search."}
+          {rows.length === 0 ? "No calls assigned to you yet." : "No calls match this search."}
         </div>
       ) : (
         <div className="mt-5 grid gap-2">
@@ -154,6 +155,7 @@ function EmployeeCalls() {
               </div>
             </div>
 
+            <TranscriptAnalysis key={open.id} leadId={open.id} companyId={companyId} readOnly />
             <Section title="Contact" f={[["Phone", open.caller_phone], ["Caller role", label(open.caller_role)], ["Existing customer", yn(open.existing_customer)], ["Callback consent", yn(open.consent_to_callback)]]} />
             <Section title="Location" f={[["Postcode", open.postcode], ["Address", open.full_address], ["Property type", label(open.property_type)]]} />
             <Section title="Issue" f={[["Category", label(open.service_category)], ["Summary", open.issue_summary], ["Preferred", [open.preferred_date, open.preferred_time].filter(Boolean).join(" ")]]} />

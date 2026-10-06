@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { getSupabase } from "@/lib/supabase";
-import { getPortalAccess } from "@/lib/portal-access";
+import { getPortalAccess, needsPasswordChange } from "@/lib/portal-access";
 
 export const Route = createFileRoute("/dashboard")({
   staticData: { sitemap: "exclude-subtree" },
@@ -19,7 +19,8 @@ export const Route = createFileRoute("/dashboard")({
   beforeLoad: async ({ location }) => {
     const access = await getPortalAccess();
     if (!access) throw redirect({ to: "/owner/login" });
-    if (!access.isOwner) throw redirect({ to: "/owner/login" });
+    if (needsPasswordChange(access)) throw redirect({ to: "/change-password" });
+    if (!access.isOwner) throw redirect({ to: "/login" });
     if (location.pathname === "/dashboard" || location.pathname === "/dashboard/") throw redirect({ to: "/dashboard/companies" });
     return { email: access.email, isOwner: access.isOwner };
   },
@@ -41,7 +42,7 @@ function DashboardLayout() {
           <Link to="/" className="text-sm font-bold tracking-tight">
             Callwoven <span className="font-medium text-muted-foreground">Ops</span>
           </Link>
-          <nav className="flex gap-1">
+          <nav className="flex flex-wrap gap-1">
             <Link to="/dashboard/leads" className={tab} activeProps={{ className: "bg-muted !text-foreground" }}>Leads</Link>
             <Link to="/dashboard/companies" className={tab} activeProps={{ className: "bg-muted !text-foreground" }}>Companies</Link>
             <Link to="/dashboard/pilots" className={tab} activeProps={{ className: "bg-muted !text-foreground" }}>Pilot interests</Link>
@@ -49,6 +50,7 @@ function DashboardLayout() {
           </nav>
           <div className="ml-auto flex items-center gap-3">
             <span className="hidden text-xs text-muted-foreground sm:inline">{email}</span>
+            <Link to="/change-password" className="text-xs underline underline-offset-4">Change password</Link>
             <button onClick={signOut} className="rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted">
               Sign out
             </button>

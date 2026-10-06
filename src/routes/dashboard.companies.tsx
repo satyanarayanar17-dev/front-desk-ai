@@ -1,10 +1,11 @@
+import { CreateClientLogin } from "@/components/CreateClientLogin";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { fmtTime, getSupabase, label, type Company, type CompanySettings } from "@/lib/supabase";
 
 export const Route = createFileRoute("/dashboard/companies")({ staticData: { sitemap: false }, component: CompaniesPage });
 
-const FEATURES = ["leads", "notes", "sms", "reports"] as const;
+const FEATURES = ["leads", "notes", "ai_analysis"] as const;
 const COMPANY_STATUSES = ["pilot", "active", "paused", "cancelled"] as const;
 
 type CompanyRow = Company & { settings: CompanySettings | null };
@@ -27,7 +28,8 @@ function CompaniesPage() {
 
   const create = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     setMsg(null);
     const name = String(fd.get("name") ?? "").trim();
     const slug = String(fd.get("slug") ?? "").trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-");
@@ -51,7 +53,7 @@ function CompaniesPage() {
       return;
     }
     setMsg(`Created ${name}.`);
-    e.currentTarget.reset();
+    form.reset();
     load();
   };
 
@@ -183,6 +185,8 @@ function CompaniesPage() {
               </label>
             </div>
 
+            <CreateClientLogin key={open.id} companyId={open.id} active={["pilot","active"].includes(open.status)} />
+
             <fieldset className="mt-5">
               <legend className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Feature switches</legend>
               <div className="mt-2 space-y-2">
@@ -191,7 +195,7 @@ function CompaniesPage() {
                     <input
                       type="checkbox"
                       className="h-4 w-4 accent-[var(--brand)]"
-                      checked={Boolean(open.settings!.features?.[f])}
+                      checked={f === "ai_analysis" ? open.settings!.features?.[f] !== false : Boolean(open.settings!.features?.[f])}
                       onChange={(e) => updateSettings(open.id, { features: { ...open.settings!.features, [f]: e.target.checked } })}
                     />
                     <span>{label(f)}</span>

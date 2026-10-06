@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { getSupabase } from "@/lib/supabase";
-import { activeMembership, getPortalAccess } from "@/lib/portal-access";
+import { activeMembership, getPortalAccess, needsPasswordChange } from "@/lib/portal-access";
 
 export const Route = createFileRoute("/employee")({
   staticData: { sitemap: "exclude-subtree" },
@@ -19,9 +19,10 @@ export const Route = createFileRoute("/employee")({
   beforeLoad: async () => {
     const access = await getPortalAccess();
     if (!access) throw redirect({ to: "/client/login" });
-    const membership = activeMembership(access);
+    if (needsPasswordChange(access)) throw redirect({ to: "/change-password" });
+    const membership = activeMembership(access, "employee");
     if (!membership) {
-      if (activeMembership(access)) throw redirect({ to: "/employee" });
+      if (activeMembership(access, "manager")) throw redirect({ to: "/manager" });
       throw redirect({ to: "/client/login" });
     }
     return { email: access.email, userId: access.userId, companyId: membership.company_id };
@@ -45,6 +46,7 @@ function EmployeeLayout() {
           </Link>
           <div className="ml-auto flex items-center gap-3">
             <span className="hidden text-xs text-muted-foreground sm:inline">{email}</span>
+            <Link to="/change-password" className="text-xs underline underline-offset-4">Change password</Link>
             <button onClick={signOut} className="rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted">
               Sign out
             </button>

@@ -4,6 +4,50 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.page-transition-content { display: contents; }
+.callwoven-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(120deg, #fce1e4 0%, #fffafa 45%, #ddf3f7 100%);
+  color: #171717;
+  opacity: 1;
+  transition: opacity 160ms ease-out;
+}
+.callwoven-transition.is-leaving { opacity: 0; }
+.callwoven-transition-loader { position: relative; width: 85px; height: 85px; }
+.callwoven-transition-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #f4b9c3 0deg 92deg, transparent 92deg 108deg, #a9dce7 108deg 212deg, transparent 212deg 228deg, #545458 228deg 312deg, transparent 312deg 360deg);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
+  animation: callwoven-loading-spin 1.8s linear infinite;
+}
+.callwoven-transition-mark { position: absolute; inset: 25.5px 12px; }
+.callwoven-transition-mark span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 37px;
+  height: 32px;
+  border: 8px solid #abd9e5;
+  border-radius: 52% 52% 48% 48%;
+  box-sizing: border-box;
+  transform: rotate(-35deg);
+}
+.callwoven-transition-mark span + span { left: 24px; border-color: #f4bdc7; transform: rotate(35deg); }
+.callwoven-transition-wordmark { margin-top: 8.5px; font: 400 1.4375rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: -0.03em; }
+@keyframes callwoven-loading-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .callwoven-transition-ring { animation: none; }
+  .callwoven-transition { transition: none; }
+}
+
 /*
  * Design system — Callwoven
  * Direction: warm, calm and credible with blush, powder blue and charcoal.

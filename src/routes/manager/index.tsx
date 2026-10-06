@@ -1,7 +1,8 @@
+import { TranscriptAnalysis } from "@/components/TranscriptAnalysis";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { useLiveTable } from "@/hooks/use-live-table";
-import { friendlyError, fmtTime, getSupabase, label, LEAD_STATUSES, type Company, type EnquiryNote, type Lead } from "@/lib/supabase";
+import { friendlyError, fmtTime, getSupabase, label, LEAD_STATUSES, type Company, type CompanyMembership, type EnquiryNote, type Lead } from "@/lib/supabase";
 
 export const Route = createFileRoute("/manager/")({ staticData: { sitemap: false }, component: ManagerCalls });
 
@@ -18,7 +19,9 @@ function Badge({ children, className }: { children: ReactNode; className: string
 
 function ManagerCalls() {
   const { companyId } = Route.useRouteContext();
-  const { rows, loading, error, realtime, reload, updateStatus } = useLiveTable<Lead>("frontdesk_leads");
+  const { rows, loading, error, realtime, reload, updateStatus } = useLiveTable<Lead>("frontdesk_leads", { companyId });
+  const [team, setTeam] = useState<CompanyMembership[]>([]);
+  useEffect(() => { getSupabase().from("company_memberships").select("*").eq("company_id", companyId).eq("role", "employee").eq("status", "active").then(({data}) => setTeam((data ?? []) as CompanyMembership[])); }, [companyId]);
   const [notes, setNotes] = useState<EnquiryNote[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
@@ -130,6 +133,12 @@ function ManagerCalls() {
                 {LEAD_STATUSES.map((s) => <option key={s} value={s}>{label(s)}</option>)}
               </select>
             </label>
+            <label className="mt-4 block text-sm font-medium">Assigned employee
+              <select aria-label="Assigned employee" className={`${sel} mt-1 block w-full`} value={open.assigned_employee_id ?? ""} onChange={async (e) => {
+                const {data,error} = await getSupabase().from("frontdesk_leads").update({assigned_employee_id:e.target.value || null}).eq("id",open.id).select("id");
+                setMsg(error ? friendlyError(error) : !data?.length ? "Assignment was not permitted." : null); reload();
+              }}><option value="">Unassigned</option>{team.map(m => <option key={m.id} value={m.user_id}>{m.user_id.slice(0,8)}</option>)}</select>
+            </label>
             {msg && <p className="mt-2 text-xs text-destructive">{msg}</p>}
 
             <div className="mt-5">
@@ -154,6 +163,7 @@ function ManagerCalls() {
               </div>
             </div>
 
+            <TranscriptAnalysis key={open.id} leadId={open.id} companyId={companyId} />
             <Section title="Contact" f={[["Phone", open.caller_phone], ["Caller role", label(open.caller_role)], ["Existing customer", yn(open.existing_customer)], ["Callback consent", yn(open.consent_to_callback)]]} />
             <Section title="Location" f={[["Postcode", open.postcode], ["Address", open.full_address], ["Property type", label(open.property_type)]]} />
             <Section title="Issue" f={[["Category", label(open.service_category)], ["Summary", open.issue_summary], ["Preferred", [open.preferred_date, open.preferred_time].filter(Boolean).join(" ")]]} />

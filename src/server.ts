@@ -1,4 +1,5 @@
 import "./lib/error-capture";
+import { handleCallAnalysis } from "./lib/call-analysis.server";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
@@ -47,6 +48,11 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      if (new URL(request.url).pathname === "/api/call-analysis") {
+        // Nitro's SSR service forwards the Request; Cloudflare bindings are on runtime.
+        const runtime = request as Request & { runtime?: { cloudflare?: { env?: { OPENAI_API_KEY?: string } } } };
+        return handleCallAnalysis(request, runtime.runtime?.cloudflare?.env ?? env as { OPENAI_API_KEY?: string });
+      }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

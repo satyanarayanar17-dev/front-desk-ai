@@ -24,7 +24,7 @@ function HistoryPage() {
           {mine.slice(0, 200).map((h) => (
             <div key={h.id} className="rounded-xl border border-border bg-card p-4 text-sm shadow-sm">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-semibold">{h.action === "created" ? "Call received" : "Call updated"}</span>
+                <span className="font-semibold">{`${h.table_name.replace(/_/g, " ")} · ${h.action}`}</span>
                 <span className="ml-auto text-xs text-muted-foreground">{fmtTime(h.created_at)}</span>
               </div>
               {h.changes && (

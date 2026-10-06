@@ -7,7 +7,7 @@ import { friendlyError, getSupabase } from "@/lib/supabase";
  * 30s as fallback. The table name is a runtime string, so a loose-typed client
  * is used here — access is still enforced by RLS in the database.
  */
-export function useLiveTable<T extends { id: string }>(table: string) {
+export function useLiveTable<T extends { id: string }>(table: string, scope?: { companyId: string; employeeId?: string }) {
   const [rows, setRows] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -16,18 +16,19 @@ export function useLiveTable<T extends { id: string }>(table: string) {
   const client = getSupabase() as unknown as SupabaseClient;
 
   const load = useCallback(async () => {
-    const { data, error } = await client
-      .from(table)
-      .select("*")
+    let query = client.from(table).select("*");
+    if (scope?.companyId) query = query.eq("company_id", scope.companyId);
+    if (scope?.employeeId) query = query.eq("assigned_employee_id", scope.employeeId);
+    const { data, error } = await query
       .order("created_at", { ascending: false })
       .limit(500);
-    if (error) setError(friendlyError(error));
+    if (error) { setError(friendlyError(error)); setRows([]); }
     else {
       setError(null);
       setRows((data ?? []) as unknown as T[]);
     }
     setLoading(false);
-  }, [client, table]);
+  }, [client, table, scope?.companyId, scope?.employeeId]);
 
   useEffect(() => {
     load();

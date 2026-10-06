@@ -21,7 +21,8 @@ function TeamPage() {
 
   const record = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const email = String(fd.get("email") ?? "").trim().toLowerCase();
     const role = fd.get("role") === "manager" ? "manager" : "employee";
     setMsg(null);
@@ -34,8 +35,8 @@ function TeamPage() {
       setMsg(`Couldn't record invitation: ${error.message}`);
       return;
     }
-    setMsg(`Recorded ${role} place for ${email}. Share the sign-in link with them directly — no email is sent from here yet.`);
-    e.currentTarget.reset();
+    setMsg(`Reserved ${role} place for ${email}. Callwoven must finish account setup before they can sign in. No email has been sent.`);
+    form.reset();
     reloadI();
   };
 
@@ -68,12 +69,12 @@ function TeamPage() {
           Role
           <select name="role" className="mt-1 block rounded-md border border-input bg-card px-2.5 py-2 text-sm">
             <option value="employee">Employee</option>
-            <option value="manager">Manager</option>
+
           </select>
         </label>
         <button type="submit" className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Record member</button>
       </form>
-      <p className="mt-2 text-xs text-muted-foreground">This records the place only — it doesn't send an email. When the person is set up, they sign in on the same login page.</p>
+      <p className="mt-2 text-xs text-muted-foreground">This reserves a place only. Callwoven must finish account setup; it does not send an email or create a login.</p>
 
       <h2 className="mt-8 text-lg font-semibold">Recorded invitations</h2>
       <div className="mt-3 grid gap-2">

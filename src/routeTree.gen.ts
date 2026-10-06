@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChangePasswordRouteImport } from './routes/change-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DentalRouteImport } from './routes/dental'
@@ -38,6 +39,11 @@ import { Route as ApiPublicWebhooksVapiRouteImport } from './routes/api/public/w
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChangePasswordRoute = ChangePasswordRouteImport.update({
+  id: '/change-password',
+  path: '/change-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -165,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/employee': typeof EmployeeRouteRouteWithChildren
   '/manager': typeof ManagerRouteRouteWithChildren
+  '/change-password': typeof ChangePasswordRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/dental': typeof DentalRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/change-password': typeof ChangePasswordRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/dental': typeof DentalRoute
@@ -218,6 +226,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/employee': typeof EmployeeRouteRouteWithChildren
   '/manager': typeof ManagerRouteRouteWithChildren
+  '/change-password': typeof ChangePasswordRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/dental': typeof DentalRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/'
     | '/employee'
     | '/manager'
+    | '/change-password'
     | '/dashboard'
     | '/demo'
     | '/dental'
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/change-password'
     | '/dashboard'
     | '/demo'
     | '/dental'
@@ -299,6 +310,7 @@ export interface FileRouteTypes {
     | '/'
     | '/employee'
     | '/manager'
+    | '/change-password'
     | '/dashboard'
     | '/demo'
     | '/dental'
@@ -327,6 +339,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EmployeeRouteRoute: typeof EmployeeRouteRouteWithChildren
   ManagerRouteRoute: typeof ManagerRouteRouteWithChildren
+  ChangePasswordRoute: typeof ChangePasswordRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   DemoRoute: typeof DemoRoute
   DentalRoute: typeof DentalRoute
@@ -349,6 +362,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/change-password': {
+      id: '/change-password'
+      path: '/change-password'
+      fullPath: '/change-password'
+      preLoaderRoute: typeof ChangePasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -574,6 +594,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EmployeeRouteRoute: EmployeeRouteRouteWithChildren,
   ManagerRouteRoute: ManagerRouteRouteWithChildren,
+  ChangePasswordRoute: ChangePasswordRoute,
   DashboardRoute: DashboardRouteWithChildren,
   DemoRoute: DemoRoute,
   DentalRoute: DentalRoute,
