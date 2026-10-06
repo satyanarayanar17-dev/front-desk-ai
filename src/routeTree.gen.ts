@@ -21,6 +21,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TradesRouteImport } from './routes/trades'
 import { Route as DashboardLeadsRouteImport } from './routes/dashboard.leads'
 import { Route as DashboardPilotsRouteImport } from './routes/dashboard.pilots'
+import { Route as ApiPublicWebhooksVapiRouteImport } from './routes/api/public/webhooks/vapi'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +83,11 @@ const DashboardPilotsRoute = DashboardPilotsRouteImport.update({
   path: '/pilots',
   getParentRoute: () => DashboardRoute,
 } as any)
+const ApiPublicWebhooksVapiRoute = ApiPublicWebhooksVapiRouteImport.update({
+  id: '/api/public/webhooks/vapi',
+  path: '/api/public/webhooks/vapi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/trades': typeof TradesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
+  '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/trades': typeof TradesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
+  '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/trades': typeof TradesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
+  '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/trades'
     | '/dashboard/leads'
     | '/dashboard/pilots'
+    | '/api/public/webhooks/vapi'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/trades'
     | '/dashboard/leads'
     | '/dashboard/pilots'
+    | '/api/public/webhooks/vapi'
   id:
     | '__root__'
     | '/'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/trades'
     | '/dashboard/leads'
     | '/dashboard/pilots'
+    | '/api/public/webhooks/vapi'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -182,6 +194,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TradesRoute: typeof TradesRoute
+  ApiPublicWebhooksVapiRoute: typeof ApiPublicWebhooksVapiRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -270,6 +283,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPilotsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/api/public/webhooks/vapi': {
+      id: '/api/public/webhooks/vapi'
+      path: '/api/public/webhooks/vapi'
+      fullPath: '/api/public/webhooks/vapi'
+      preLoaderRoute: typeof ApiPublicWebhooksVapiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -298,6 +318,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TradesRoute: TradesRoute,
+  ApiPublicWebhooksVapiRoute: ApiPublicWebhooksVapiRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
