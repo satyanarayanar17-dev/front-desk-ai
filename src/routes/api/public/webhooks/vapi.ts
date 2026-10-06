@@ -123,7 +123,7 @@ export const Route = createFileRoute("/api/public/webhooks/vapi")({
           }
         }
         if (!companyId) {
-          const inboundNumber = str(get(body, ["call", "destinationPhone"])) ?? str(get(body, ["call", "toNumber"]));
+          const inboundNumber = str(get(payload, ["call", "destinationPhone"])) ?? str(get(payload, ["call", "toNumber"]));
           if (inboundNumber) {
             const { data: s } = await supabaseAdmin
               .from("company_settings")
@@ -137,9 +137,9 @@ export const Route = createFileRoute("/api/public/webhooks/vapi")({
           }
         }
 
-        const structured = findStructuredOutputs(body);
-        const callerName = str(get(body, ["call", "customer", "name"]));
-        const callerPhone = str(get(body, ["call", "customer", "number"]));
+        const structured = findStructuredOutputs(payload);
+        const callerName = str(get(payload, ["call", "customer", "name"]));
+        const callerPhone = str(get(payload, ["call", "customer", "number"]));
 
         // The DB stores snake_case; map from camelCase where present.
         const so: AnyRecord = structured ?? {};
@@ -153,7 +153,7 @@ export const Route = createFileRoute("/api/public/webhooks/vapi")({
           vapi_call_id: vapiCallId,
           event_type: eventType,
           assistant_id: assistantId,
-          structured_output_name: str(get(body, ["structuredOutputName"])) ?? str(snakeize(so)["structured_output_name"]) ?? null,
+          structured_output_name: str(get(payload, ["structuredOutputName"])) ?? str(snakeize(so)["structured_output_name"]) ?? null,
           caller_name: callerName ?? (g("caller_name", "callerName") as string | null) ?? null,
           caller_phone: callerPhone ?? (g("caller_phone", "callerPhone") as string | null) ?? null,
           postcode: g("postcode", "postcode") as string | null,
@@ -181,7 +181,7 @@ export const Route = createFileRoute("/api/public/webhooks/vapi")({
           call_summary: g("call_summary", "callSummary") as string | null,
           recommended_business_action: g("recommended_business_action", "recommendedBusinessAction") as string | null,
           status: "new",
-          raw_payload: body,
+          raw_payload: raw,
           company_id: companyId,
           assignment_status: companyId ? "assigned" : "unmatched",
           match_reason: matchReason,
