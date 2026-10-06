@@ -57,6 +57,7 @@ const get = (p: unknown, path: string[]) => {
 };
 
 export const Route = createFileRoute("/api/public/webhooks/vapi")({
+  staticData: { sitemap: false },
   server: {
     handlers: {
       GET: async () => new Response(JSON.stringify({ ok: true, service: "vapi-webhook" }), { headers: { "Content-Type": "application/json" } }),
