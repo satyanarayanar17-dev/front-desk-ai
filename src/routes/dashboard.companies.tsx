@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
-import { useLiveTable } from "@/hooks/use-live-table";
 import { fmtTime, getSupabase, label, type Company, type CompanySettings } from "@/lib/supabase";
 
 export const Route = createFileRoute("/dashboard/companies")({ staticData: { sitemap: false }, component: CompaniesPage });
@@ -11,14 +10,16 @@ const COMPANY_STATUSES = ["pilot", "active", "paused", "cancelled"] as const;
 type CompanyRow = Company & { settings: CompanySettings | null };
 
 function CompaniesPage() {
-  const { rows: settingsRows, reload } = useLiveTable<CompanySettings>("company_settings");
+  const [settingsRows, setSettingsRows] = useState<CompanySettings[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [msg, setMsg] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = () => {
     getSupabase().from("companies").select("*").order("created_at", { ascending: false }).then(({ data }) => setCompanies((data ?? []) as Company[]));
-  }, []);
+    getSupabase().from("company_settings").select("*").then(({ data }) => setSettingsRows((data ?? []) as CompanySettings[]));
+  };
+  useEffect(load, []);
 
   const rows: CompanyRow[] = companies.map((c) => ({ ...c, settings: settingsRows.find((s) => s.company_id === c.id) ?? null }));
   const open = rows.find((r) => r.id === openId);
@@ -54,18 +55,18 @@ function CompaniesPage() {
     reload();
   };
 
-  const updateCompany = async (id: string, patch: Partial<Company>) => {
+  const updateCompany = async (id: string, patch: { status?: string; contact_email?: string | null }) => {
     setMsg(null);
     const { error } = await getSupabase().from("companies").update(patch).eq("id", id);
     setMsg(error ? `Couldn't update company: ${error.message}` : "Saved.");
-    reload();
+    load();
   };
 
-  const updateSettings = async (companyId: string, patch: Partial<CompanySettings>) => {
+  const updateSettings = async (companyId: string, patch: { seat_limit?: number; included_minutes?: number; assistant_id?: string | null; inbound_phone_number?: string | null; features?: Record<string, boolean> }) => {
     setMsg(null);
     const { error } = await getSupabase().from("company_settings").update(patch).eq("company_id", companyId);
     setMsg(error ? `Couldn't update settings: ${error.message}` : "Saved.");
-    reload();
+    load();
   };
 
   return (
