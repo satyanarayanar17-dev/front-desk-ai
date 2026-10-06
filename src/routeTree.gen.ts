@@ -15,10 +15,12 @@ import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DentalRouteImport } from './routes/dental'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ManagerRouteRouteImport } from './routes/manager/route'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TradesRouteImport } from './routes/trades'
+import { Route as DashboardCompaniesRouteImport } from './routes/dashboard.companies'
 import { Route as DashboardLeadsRouteImport } from './routes/dashboard.leads'
 import { Route as DashboardPilotsRouteImport } from './routes/dashboard.pilots'
 import { Route as ApiPublicWebhooksVapiRouteImport } from './routes/api/public/webhooks/vapi'
@@ -53,6 +55,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManagerRouteRoute = ManagerRouteRouteImport.update({
+  id: '/manager',
+  path: '/manager',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -73,6 +80,11 @@ const TradesRoute = TradesRouteImport.update({
   path: '/trades',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardCompaniesRoute = DashboardCompaniesRouteImport.update({
+  id: '/companies',
+  path: '/companies',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardLeadsRoute = DashboardLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -91,6 +103,7 @@ const ApiPublicWebhooksVapiRoute = ApiPublicWebhooksVapiRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/manager': typeof ManagerRouteRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/dental': typeof DentalRoute
@@ -100,12 +113,14 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trades': typeof TradesRoute
+  '/dashboard/companies': typeof DashboardCompaniesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
   '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/manager': typeof ManagerRouteRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/dental': typeof DentalRoute
@@ -115,6 +130,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trades': typeof TradesRoute
+  '/dashboard/companies': typeof DashboardCompaniesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
   '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
@@ -122,6 +138,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/manager': typeof ManagerRouteRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/dental': typeof DentalRoute
@@ -131,6 +148,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trades': typeof TradesRoute
+  '/dashboard/companies': typeof DashboardCompaniesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
   '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
@@ -139,6 +157,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/manager'
     | '/dashboard'
     | '/demo'
     | '/dental'
@@ -148,12 +167,14 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/trades'
+    | '/dashboard/companies'
     | '/dashboard/leads'
     | '/dashboard/pilots'
     | '/api/public/webhooks/vapi'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/manager'
     | '/dashboard'
     | '/demo'
     | '/dental'
@@ -163,12 +184,14 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/trades'
+    | '/dashboard/companies'
     | '/dashboard/leads'
     | '/dashboard/pilots'
     | '/api/public/webhooks/vapi'
   id:
     | '__root__'
     | '/'
+    | '/manager'
     | '/dashboard'
     | '/demo'
     | '/dental'
@@ -178,6 +201,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/trades'
+    | '/dashboard/companies'
     | '/dashboard/leads'
     | '/dashboard/pilots'
     | '/api/public/webhooks/vapi'
@@ -185,6 +209,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ManagerRouteRoute: typeof ManagerRouteRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   DemoRoute: typeof DemoRoute
   DentalRoute: typeof DentalRoute
@@ -241,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/manager': {
+      id: '/manager'
+      path: '/manager'
+      fullPath: '/manager'
+      preLoaderRoute: typeof ManagerRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -269,6 +301,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TradesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/companies': {
+      id: '/dashboard/companies'
+      path: '/companies'
+      fullPath: '/dashboard/companies'
+      preLoaderRoute: typeof DashboardCompaniesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/leads': {
       id: '/dashboard/leads'
       path: '/leads'
@@ -294,11 +333,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface DashboardRouteChildren {
+  DashboardCompaniesRoute: typeof DashboardCompaniesRoute
   DashboardLeadsRoute: typeof DashboardLeadsRoute
   DashboardPilotsRoute: typeof DashboardPilotsRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardCompaniesRoute: DashboardCompaniesRoute,
   DashboardLeadsRoute: DashboardLeadsRoute,
   DashboardPilotsRoute: DashboardPilotsRoute,
 }
@@ -309,6 +350,7 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ManagerRouteRoute: ManagerRouteRoute,
   DashboardRoute: DashboardRouteWithChildren,
   DemoRoute: DemoRoute,
   DentalRoute: DentalRoute,
