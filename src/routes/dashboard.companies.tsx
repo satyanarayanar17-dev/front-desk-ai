@@ -52,7 +52,7 @@ function CompaniesPage() {
     }
     setMsg(`Created ${name}.`);
     e.currentTarget.reset();
-    reload();
+    load();
   };
 
   const updateCompany = async (id: string, patch: { status?: string; contact_email?: string | null }) => {

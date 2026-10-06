@@ -23,7 +23,7 @@ function TeamPage() {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const email = String(fd.get("email") ?? "").trim().toLowerCase();
-    const role = String(fd.get("role") ?? "employee");
+    const role = fd.get("role") === "manager" ? "manager" : "employee";
     setMsg(null);
     if (!email) {
       setMsg("Enter the team member's email.");

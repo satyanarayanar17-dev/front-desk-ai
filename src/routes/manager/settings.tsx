@@ -20,7 +20,7 @@ function SettingsPage() {
       .then(({ data }) => setCompany(data as Company | null));
   }, [companyId]);
 
-  const update = async (patch: Partial<CompanySettings>) => {
+  const update = async (patch: { seat_limit?: number; included_minutes?: number; assistant_id?: string | null; inbound_phone_number?: string | null; features?: Record<string, boolean> }) => {
     if (!settings) return;
     setMsg(null);
     const { error } = await getSupabase().from("company_settings").update(patch).eq("company_id", companyId);
