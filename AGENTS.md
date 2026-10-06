@@ -12,3 +12,4 @@
 - Public marketing pages share `src/components/Marketing.tsx` while owner routes stay independent, so brand changes do not alter operations.
 - Demo and pilot interest reuse `frontdesk_pilot_interests` with source and request markers in `notes`, so no production schema migration is needed.
 - Public branding is Callwoven; internal database, webhook and integration identifiers retain their existing FrontDesk names to preserve compatibility.
+- Portal access is decided only by backend role/membership tables (via get_my_portal_access and private.* RLS helpers), never by email lists or which login page was used, so login pages cannot grant access.

@@ -12,3 +12,7 @@
 ## Follow-ups
 - [ ] Configure Vapi webhook secret (VAPI_WEBHOOK_SECRET) when the user provides it.
 - [ ] Email sending for invitations/magic links — requires a transactional sender to be set up.
+- [x] Separate owner (/owner/login) and client (/client/login) sign-in with backend role checks
+- [ ] Signed-in browser test of portals (blocked: magic-link email delivery needs a sender)
+- [ ] Per-employee enquiry assignment (employees currently see all their company's calls)
+- [ ] Record company/settings/team changes in change history (only call changes are recorded today)
