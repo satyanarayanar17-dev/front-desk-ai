@@ -13,14 +13,23 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DentalRouteImport } from './routes/dental'
+import { Route as EmployeeRouteRouteImport } from './routes/employee/route'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ManagerRouteRouteImport } from './routes/manager/route'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TradesRouteImport } from './routes/trades'
+import { Route as DashboardCompaniesRouteImport } from './routes/dashboard.companies'
 import { Route as DashboardLeadsRouteImport } from './routes/dashboard.leads'
 import { Route as DashboardPilotsRouteImport } from './routes/dashboard.pilots'
+import { Route as EmployeeIndexRouteImport } from './routes/employee/index'
+import { Route as ManagerIndexRouteImport } from './routes/manager/index'
+import { Route as ManagerHistoryRouteImport } from './routes/manager/history'
+import { Route as ManagerSettingsRouteImport } from './routes/manager/settings'
+import { Route as ManagerTeamRouteImport } from './routes/manager/team'
+import { Route as ApiPublicWebhooksVapiRouteImport } from './routes/api/public/webhooks/vapi'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -42,6 +51,11 @@ const DentalRoute = DentalRouteImport.update({
   path: '/dental',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployeeRouteRoute = EmployeeRouteRouteImport.update({
+  id: '/employee',
+  path: '/employee',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
@@ -50,6 +64,11 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManagerRouteRoute = ManagerRouteRouteImport.update({
+  id: '/manager',
+  path: '/manager',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -72,6 +91,11 @@ const TradesRoute = TradesRouteImport.update({
   path: '/trades',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardCompaniesRoute = DashboardCompaniesRouteImport.update({
+  id: '/companies',
+  path: '/companies',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardLeadsRoute = DashboardLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -82,9 +106,41 @@ const DashboardPilotsRoute = DashboardPilotsRouteImport.update({
   path: '/pilots',
   getParentRoute: () => DashboardRoute,
 } as any)
+const EmployeeIndexRoute = EmployeeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EmployeeRouteRoute,
+} as any)
+const ManagerIndexRoute = ManagerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ManagerRouteRoute,
+} as any)
+const ManagerHistoryRoute = ManagerHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => ManagerRouteRoute,
+} as any)
+const ManagerSettingsRoute = ManagerSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => ManagerRouteRoute,
+} as any)
+const ManagerTeamRoute = ManagerTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => ManagerRouteRoute,
+} as any)
+const ApiPublicWebhooksVapiRoute = ApiPublicWebhooksVapiRouteImport.update({
+  id: '/api/public/webhooks/vapi',
+  path: '/api/public/webhooks/vapi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/employee': typeof EmployeeRouteRouteWithChildren
+  '/manager': typeof ManagerRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/dental': typeof DentalRoute
@@ -94,8 +150,15 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trades': typeof TradesRoute
+  '/dashboard/companies': typeof DashboardCompaniesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
+  '/manager/history': typeof ManagerHistoryRoute
+  '/manager/settings': typeof ManagerSettingsRoute
+  '/manager/team': typeof ManagerTeamRoute
+  '/employee/': typeof EmployeeIndexRoute
+  '/manager/': typeof ManagerIndexRoute
+  '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -108,12 +171,21 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trades': typeof TradesRoute
+  '/dashboard/companies': typeof DashboardCompaniesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
+  '/manager/history': typeof ManagerHistoryRoute
+  '/manager/settings': typeof ManagerSettingsRoute
+  '/manager/team': typeof ManagerTeamRoute
+  '/employee': typeof EmployeeIndexRoute
+  '/manager': typeof ManagerIndexRoute
+  '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/employee': typeof EmployeeRouteRouteWithChildren
+  '/manager': typeof ManagerRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/dental': typeof DentalRoute
@@ -123,13 +195,22 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trades': typeof TradesRoute
+  '/dashboard/companies': typeof DashboardCompaniesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
+  '/manager/history': typeof ManagerHistoryRoute
+  '/manager/settings': typeof ManagerSettingsRoute
+  '/manager/team': typeof ManagerTeamRoute
+  '/employee/': typeof EmployeeIndexRoute
+  '/manager/': typeof ManagerIndexRoute
+  '/api/public/webhooks/vapi': typeof ApiPublicWebhooksVapiRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/employee'
+    | '/manager'
     | '/dashboard'
     | '/demo'
     | '/dental'
@@ -139,8 +220,15 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/trades'
+    | '/dashboard/companies'
     | '/dashboard/leads'
     | '/dashboard/pilots'
+    | '/manager/history'
+    | '/manager/settings'
+    | '/manager/team'
+    | '/employee/'
+    | '/manager/'
+    | '/api/public/webhooks/vapi'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -153,11 +241,20 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/trades'
+    | '/dashboard/companies'
     | '/dashboard/leads'
     | '/dashboard/pilots'
+    | '/manager/history'
+    | '/manager/settings'
+    | '/manager/team'
+    | '/employee'
+    | '/manager'
+    | '/api/public/webhooks/vapi'
   id:
     | '__root__'
     | '/'
+    | '/employee'
+    | '/manager'
     | '/dashboard'
     | '/demo'
     | '/dental'
@@ -167,12 +264,21 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap.xml'
     | '/trades'
+    | '/dashboard/companies'
     | '/dashboard/leads'
     | '/dashboard/pilots'
+    | '/manager/history'
+    | '/manager/settings'
+    | '/manager/team'
+    | '/employee/'
+    | '/manager/'
+    | '/api/public/webhooks/vapi'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmployeeRouteRoute: typeof EmployeeRouteRouteWithChildren
+  ManagerRouteRoute: typeof ManagerRouteRouteWithChildren
   DashboardRoute: typeof DashboardRouteWithChildren
   DemoRoute: typeof DemoRoute
   DentalRoute: typeof DentalRoute
@@ -182,6 +288,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TradesRoute: typeof TradesRoute
+  ApiPublicWebhooksVapiRoute: typeof ApiPublicWebhooksVapiRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -214,6 +321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DentalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employee': {
+      id: '/employee'
+      path: '/employee'
+      fullPath: '/employee'
+      preLoaderRoute: typeof EmployeeRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/how-it-works': {
       id: '/how-it-works'
       path: '/how-it-works'
@@ -226,6 +340,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manager': {
+      id: '/manager'
+      path: '/manager'
+      fullPath: '/manager'
+      preLoaderRoute: typeof ManagerRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -256,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TradesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/companies': {
+      id: '/dashboard/companies'
+      path: '/companies'
+      fullPath: '/dashboard/companies'
+      preLoaderRoute: typeof DashboardCompaniesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/leads': {
       id: '/dashboard/leads'
       path: '/leads'
@@ -270,15 +398,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPilotsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/employee/': {
+      id: '/employee/'
+      path: '/'
+      fullPath: '/employee/'
+      preLoaderRoute: typeof EmployeeIndexRouteImport
+      parentRoute: typeof EmployeeRouteRoute
+    }
+    '/manager/': {
+      id: '/manager/'
+      path: '/'
+      fullPath: '/manager/'
+      preLoaderRoute: typeof ManagerIndexRouteImport
+      parentRoute: typeof ManagerRouteRoute
+    }
+    '/manager/history': {
+      id: '/manager/history'
+      path: '/history'
+      fullPath: '/manager/history'
+      preLoaderRoute: typeof ManagerHistoryRouteImport
+      parentRoute: typeof ManagerRouteRoute
+    }
+    '/manager/settings': {
+      id: '/manager/settings'
+      path: '/settings'
+      fullPath: '/manager/settings'
+      preLoaderRoute: typeof ManagerSettingsRouteImport
+      parentRoute: typeof ManagerRouteRoute
+    }
+    '/manager/team': {
+      id: '/manager/team'
+      path: '/team'
+      fullPath: '/manager/team'
+      preLoaderRoute: typeof ManagerTeamRouteImport
+      parentRoute: typeof ManagerRouteRoute
+    }
+    '/api/public/webhooks/vapi': {
+      id: '/api/public/webhooks/vapi'
+      path: '/api/public/webhooks/vapi'
+      fullPath: '/api/public/webhooks/vapi'
+      preLoaderRoute: typeof ApiPublicWebhooksVapiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface EmployeeRouteRouteChildren {
+  EmployeeIndexRoute: typeof EmployeeIndexRoute
+}
+
+const EmployeeRouteRouteChildren: EmployeeRouteRouteChildren = {
+  EmployeeIndexRoute: EmployeeIndexRoute,
+}
+
+const EmployeeRouteRouteWithChildren = EmployeeRouteRoute._addFileChildren(
+  EmployeeRouteRouteChildren,
+)
+
+interface ManagerRouteRouteChildren {
+  ManagerHistoryRoute: typeof ManagerHistoryRoute
+  ManagerSettingsRoute: typeof ManagerSettingsRoute
+  ManagerTeamRoute: typeof ManagerTeamRoute
+  ManagerIndexRoute: typeof ManagerIndexRoute
+}
+
+const ManagerRouteRouteChildren: ManagerRouteRouteChildren = {
+  ManagerHistoryRoute: ManagerHistoryRoute,
+  ManagerSettingsRoute: ManagerSettingsRoute,
+  ManagerTeamRoute: ManagerTeamRoute,
+  ManagerIndexRoute: ManagerIndexRoute,
+}
+
+const ManagerRouteRouteWithChildren = ManagerRouteRoute._addFileChildren(
+  ManagerRouteRouteChildren,
+)
+
 interface DashboardRouteChildren {
+  DashboardCompaniesRoute: typeof DashboardCompaniesRoute
   DashboardLeadsRoute: typeof DashboardLeadsRoute
   DashboardPilotsRoute: typeof DashboardPilotsRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardCompaniesRoute: DashboardCompaniesRoute,
   DashboardLeadsRoute: DashboardLeadsRoute,
   DashboardPilotsRoute: DashboardPilotsRoute,
 }
@@ -289,6 +491,8 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmployeeRouteRoute: EmployeeRouteRouteWithChildren,
+  ManagerRouteRoute: ManagerRouteRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
   DemoRoute: DemoRoute,
   DentalRoute: DentalRoute,
@@ -298,6 +502,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TradesRoute: TradesRoute,
+  ApiPublicWebhooksVapiRoute: ApiPublicWebhooksVapiRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

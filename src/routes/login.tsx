@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
-import { friendlyError, getSupabase, isOwnerEmail } from "@/lib/supabase";
+import { friendlyError, getSupabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Mark } from "@/components/Marketing";
 
@@ -9,10 +9,10 @@ export const Route = createFileRoute("/login")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Owner login — Callwoven" },
-      { name: "description", content: "Owner sign-in for the Callwoven operations dashboard." },
-      { property: "og:title", content: "Owner login — Callwoven" },
-      { property: "og:description", content: "Owner sign-in for the Callwoven operations dashboard." },
+      { title: "Sign in — Callwoven" },
+      { name: "description", content: "Sign in to the Callwoven portals for owners, managers and team members." },
+      { property: "og:title", content: "Sign in — Callwoven" },
+      { property: "og:description", content: "Sign in to the Callwoven portals for owners, managers and team members." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -29,7 +29,7 @@ function LoginPage() {
 
   useEffect(() => {
     getSupabase().auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard/leads", replace: true });
+      if (data.session) navigate({ to: "/dashboard", replace: true });
     });
   }, [navigate]);
 
@@ -37,14 +37,10 @@ function LoginPage() {
     e.preventDefault();
     if (state === "sending") return;
     setError(null);
-    if (!isOwnerEmail(email)) {
-      setError("This email isn't registered as an owner account.");
-      return;
-    }
     setState("sending");
     const { error } = await getSupabase().auth.signInWithOtp({
       email: email.trim().toLowerCase(),
-      options: { emailRedirectTo: `${window.location.origin}/dashboard/leads`, shouldCreateUser: true },
+      options: { emailRedirectTo: `${window.location.origin}/dashboard`, shouldCreateUser: true },
     });
     if (error) {
       setError(friendlyError(error));
@@ -56,14 +52,14 @@ function LoginPage() {
     <div className="callwoven-hero flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm rounded-2xl border border-background/80 bg-card/95 p-8 shadow-xl">
         <Link to="/" aria-label="Callwoven home"><Mark descriptor="OPS" /></Link>
-        <h1 className="mt-6 text-xl font-semibold">Owner sign-in</h1>
+        <h1 className="mt-6 text-xl font-semibold">Sign in</h1>
         {state === "sent" ? (
           <p className="mt-3 text-sm text-muted-foreground">
             Check <strong className="text-foreground">{email}</strong> for a sign-in link. You can close this tab.
           </p>
         ) : (
           <form onSubmit={submit} className="mt-4 space-y-3">
-            <p className="text-sm text-muted-foreground">We'll email you a one-time sign-in link.</p>
+            <p className="text-sm text-muted-foreground">We'll email you a one-time sign-in link. Owners, managers and team members use the same sign-in.</p>
             <input
               type="email"
               required

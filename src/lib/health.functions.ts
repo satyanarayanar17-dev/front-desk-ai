@@ -1,13 +1,9 @@
-import { createServerFn } from "@tanstack/react-start";
-
-// Read-only GET against the public health endpoint (server-side avoids CORS).
-export const checkWebhookHealth = createServerFn({ method: "GET" }).handler(async () => {
+/** Webhook health: same-origin fetch, so no CORS and no absolute URL needed. */
+export async function checkWebhookHealth(): Promise<{ ok: boolean; status: number; checkedAt: string }> {
   try {
-    const res = await fetch("https://gtlfkvsqkxyktxqjgrbs.supabase.co/functions/v1/vapi-webhook", {
-      method: "GET",
-    });
+    const res = await fetch("/api/public/webhooks/vapi", { method: "GET" });
     return { ok: res.ok, status: res.status, checkedAt: new Date().toISOString() };
   } catch {
     return { ok: false, status: 0, checkedAt: new Date().toISOString() };
   }
-});
+}

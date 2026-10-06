@@ -1,10 +1,13 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
-// Browser-safe config only. Publishable key is intended for client use; data
-// access is enforced by Supabase Auth + Row Level Security.
-export const SUPABASE_URL = "https://gtlfkvsqkxyktxqjgrbs.supabase.co";
-export const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ZZ8QYI8tGNEunG8f6UlvVA_DkbP-iED";
-export const WEBHOOK_HEALTH_URL = `${SUPABASE_URL}/functions/v1/vapi-webhook`;
+// App data lives in Lovable Cloud. The generated client below carries the
+// publishable key and the user's session; data access is enforced by
+// Row Level Security in the database.
+export const SUPABASE_URL = import.meta.env["VITE_SUPABASE_URL"] as string;
+export const SUPABASE_PUBLISHABLE_KEY = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string;
+export const WEBHOOK_HEALTH_URL = "/api/public/webhooks/vapi";
 
 // UI-only pre-check. Real security is RLS.
 export const OWNER_EMAILS = [
@@ -14,20 +17,8 @@ export const OWNER_EMAILS = [
 export const isOwnerEmail = (email?: string | null) =>
   !!email && OWNER_EMAILS.includes(email.trim().toLowerCase());
 
-let client: SupabaseClient | undefined;
-
-export function getSupabase(): SupabaseClient {
-  if (!client) {
-    const isBrowser = typeof window !== "undefined";
-    client = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-      auth: {
-        persistSession: isBrowser,
-        autoRefreshToken: isBrowser,
-        detectSessionInUrl: isBrowser,
-      },
-    });
-  }
-  return client;
+export function getSupabase(): SupabaseClient<Database> {
+  return supabase as unknown as SupabaseClient<Database>;
 }
 
 export function friendlyError(err: unknown): string {
@@ -74,6 +65,11 @@ export type Lead = {
   recommended_business_action: string | null;
   status: string | null;
   raw_payload: unknown;
+  company_id: string | null;
+  assignment_status: string;
+  assigned_by: string | null;
+  assigned_at: string | null;
+  match_reason: string | null;
 };
 
 export type PilotInterest = {
@@ -88,6 +84,69 @@ export type PilotInterest = {
   calls_per_week: string | null;
   notes: string | null;
   status: string | null;
+};
+
+export type Company = {
+  id: string;
+  created_at: string;
+  updated_at: string | null;
+  name: string;
+  slug: string;
+  contact_email: string | null;
+  contact_phone: string | null;
+  status: string;
+};
+
+export type CompanyMembership = {
+  id: string;
+  company_id: string;
+  user_id: string;
+  role: "manager" | "employee";
+  status: "active" | "deactivated";
+  created_at: string;
+};
+
+export type CompanySettings = {
+  company_id: string;
+  seat_limit: number;
+  included_minutes: number;
+  features: Record<string, boolean> | null;
+  assistant_id: string | null;
+  inbound_phone_number: string | null;
+  call_routing_status: string;
+  updated_at: string | null;
+};
+
+export type EnquiryNote = {
+  id: string;
+  lead_id: string;
+  company_id: string;
+  author_user_id: string;
+  body: string;
+  created_at: string;
+};
+
+export type CompanyInvitation = {
+  id: string;
+  company_id: string;
+  email: string;
+  role: "manager" | "employee";
+  status: "recorded" | "accepted";
+  created_by: string | null;
+  created_at: string;
+  accepted_user_id: string | null;
+  accepted_at: string | null;
+};
+
+export type HistoryEntry = {
+  id: string;
+  company_id: string | null;
+  table_name: string;
+  record_id: string | null;
+  actor_user_id: string | null;
+  action: string;
+  changes: Record<string, unknown> | null;
+  created_at: string;
 };
 
 export const LEAD_STATUSES = ["new", "urgent", "callback_requested", "closed"] as const;
