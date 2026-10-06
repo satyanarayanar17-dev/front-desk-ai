@@ -143,7 +143,7 @@ export const Route = createFileRoute("/api/public/webhooks/vapi")({
           vapi_call_id: vapiCallId,
           event_type: eventType,
           assistant_id: assistantId,
-          structured_output_name: str(get(body, ["structuredOutputName"])) ?? snakeize(so).structured_output_name?.toString() ?? null,
+          structured_output_name: str(get(body, ["structuredOutputName"])) ?? str(snakeize(so)["structured_output_name"]) ?? null,
           caller_name: callerName ?? (g("caller_name", "callerName") as string | null) ?? null,
           caller_phone: callerPhone ?? (g("caller_phone", "callerPhone") as string | null) ?? null,
           postcode: g("postcode", "postcode") as string | null,

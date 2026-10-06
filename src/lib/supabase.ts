@@ -5,8 +5,8 @@ import type { Database } from "@/integrations/supabase/types";
 // App data lives in Lovable Cloud. The generated client below carries the
 // publishable key and the user's session; data access is enforced by
 // Row Level Security in the database.
-export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-export const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+export const SUPABASE_URL = import.meta.env["VITE_SUPABASE_URL"] as string;
+export const SUPABASE_PUBLISHABLE_KEY = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string;
 export const WEBHOOK_HEALTH_URL = "/api/public/webhooks/vapi";
 
 // UI-only pre-check. Real security is RLS.

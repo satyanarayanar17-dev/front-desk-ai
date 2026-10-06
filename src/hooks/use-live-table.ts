@@ -1,15 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { friendlyError, getSupabase } from "@/lib/supabase";
 
-/** Loads a table newest-first, subscribes to realtime changes, and polls every 30s as fallback. */
+/**
+ * Loads a table newest-first, subscribes to realtime changes, and polls every
+ * 30s as fallback. The table name is a runtime string, so a loose-typed client
+ * is used here — access is still enforced by RLS in the database.
+ */
 export function useLiveTable<T extends { id: string }>(table: string) {
   const [rows, setRows] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [realtime, setRealtime] = useState(false);
 
+  const client = getSupabase() as unknown as SupabaseClient;
+
   const load = useCallback(async () => {
-    const { data, error } = await getSupabase()
+    const { data, error } = await client
       .from(table)
       .select("*")
       .order("created_at", { ascending: false })
@@ -17,29 +24,28 @@ export function useLiveTable<T extends { id: string }>(table: string) {
     if (error) setError(friendlyError(error));
     else {
       setError(null);
-      setRows((data ?? []) as T[]);
+      setRows((data ?? []) as unknown as T[]);
     }
     setLoading(false);
-  }, [table]);
+  }, [client, table]);
 
   useEffect(() => {
     load();
-    const sb = getSupabase();
-    const channel = sb
+    const channel = client
       .channel(`live-${table}`)
       .on("postgres_changes", { event: "*", schema: "public", table }, () => load())
       .subscribe((status) => setRealtime(status === "SUBSCRIBED"));
     const poll = setInterval(load, 30_000);
     return () => {
       clearInterval(poll);
-      sb.removeChannel(channel);
+      client.removeChannel(channel);
     };
-  }, [table, load]);
+  }, [client, table, load]);
 
   const updateStatus = async (id: string, status: string) => {
     const prev = rows;
     setRows((r) => r.map((x) => (x.id === id ? { ...x, status } : x)));
-    const { data, error } = await getSupabase().from(table).update({ status }).eq("id", id).select("id");
+    const { data, error } = await client.from(table).update({ status }).eq("id", id).select("id");
     if (error || !data?.length) {
       setRows(prev);
       return error ? friendlyError(error) : "Update was not permitted.";
