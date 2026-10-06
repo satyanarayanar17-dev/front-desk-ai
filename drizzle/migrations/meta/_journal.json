@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791310999496,
+      "tag": "0000_portal_schema",
+      "breakpoints": true
+    }
+  ]
 }
