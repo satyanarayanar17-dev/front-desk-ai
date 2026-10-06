@@ -23,6 +23,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TradesRouteImport } from './routes/trades'
 import { Route as ClientLoginRouteImport } from './routes/client/login'
 import { Route as DashboardCompaniesRouteImport } from './routes/dashboard.companies'
+import { Route as DashboardHistoryRouteImport } from './routes/dashboard.history'
 import { Route as DashboardLeadsRouteImport } from './routes/dashboard.leads'
 import { Route as DashboardPilotsRouteImport } from './routes/dashboard.pilots'
 import { Route as EmployeeIndexRouteImport } from './routes/employee/index'
@@ -104,6 +105,11 @@ const DashboardCompaniesRoute = DashboardCompaniesRouteImport.update({
   path: '/companies',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardHistoryRoute = DashboardHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardLeadsRoute = DashboardLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -170,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/trades': typeof TradesRoute
   '/client/login': typeof ClientLoginRoute
   '/dashboard/companies': typeof DashboardCompaniesRoute
+  '/dashboard/history': typeof DashboardHistoryRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
   '/manager/history': typeof ManagerHistoryRoute
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/trades': typeof TradesRoute
   '/client/login': typeof ClientLoginRoute
   '/dashboard/companies': typeof DashboardCompaniesRoute
+  '/dashboard/history': typeof DashboardHistoryRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
   '/manager/history': typeof ManagerHistoryRoute
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   '/trades': typeof TradesRoute
   '/client/login': typeof ClientLoginRoute
   '/dashboard/companies': typeof DashboardCompaniesRoute
+  '/dashboard/history': typeof DashboardHistoryRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/pilots': typeof DashboardPilotsRoute
   '/manager/history': typeof ManagerHistoryRoute
@@ -249,6 +258,7 @@ export interface FileRouteTypes {
     | '/trades'
     | '/client/login'
     | '/dashboard/companies'
+    | '/dashboard/history'
     | '/dashboard/leads'
     | '/dashboard/pilots'
     | '/manager/history'
@@ -273,6 +283,7 @@ export interface FileRouteTypes {
     | '/trades'
     | '/client/login'
     | '/dashboard/companies'
+    | '/dashboard/history'
     | '/dashboard/leads'
     | '/dashboard/pilots'
     | '/manager/history'
@@ -299,6 +310,7 @@ export interface FileRouteTypes {
     | '/trades'
     | '/client/login'
     | '/dashboard/companies'
+    | '/dashboard/history'
     | '/dashboard/leads'
     | '/dashboard/pilots'
     | '/manager/history'
@@ -430,6 +442,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCompaniesRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/history': {
+      id: '/dashboard/history'
+      path: '/history'
+      fullPath: '/dashboard/history'
+      preLoaderRoute: typeof DashboardHistoryRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/leads': {
       id: '/dashboard/leads'
       path: '/leads'
@@ -535,12 +554,14 @@ const ManagerRouteRouteWithChildren = ManagerRouteRoute._addFileChildren(
 
 interface DashboardRouteChildren {
   DashboardCompaniesRoute: typeof DashboardCompaniesRoute
+  DashboardHistoryRoute: typeof DashboardHistoryRoute
   DashboardLeadsRoute: typeof DashboardLeadsRoute
   DashboardPilotsRoute: typeof DashboardPilotsRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardCompaniesRoute: DashboardCompaniesRoute,
+  DashboardHistoryRoute: DashboardHistoryRoute,
   DashboardLeadsRoute: DashboardLeadsRoute,
   DashboardPilotsRoute: DashboardPilotsRoute,
 }
