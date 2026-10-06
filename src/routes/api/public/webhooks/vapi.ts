@@ -94,7 +94,9 @@ export const Route = createFileRoute("/api/public/webhooks/vapi")({
         const eventType = str(get(payload, ["type"])) ?? str(get(payload, ["message", "type"]));
         const assistantId = str(get(payload, ["assistant", "id"])) ?? str(get(payload, ["assistantId"])) ?? str(get(payload, ["call", "assistantId"]));
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin: adminTyped } = await import("@/integrations/supabase/client.server");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const supabaseAdmin = adminTyped as any;
 
         // Skip duplicate events for the same call.
         if (vapiCallId) {

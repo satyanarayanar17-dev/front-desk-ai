@@ -17,8 +17,10 @@ export const OWNER_EMAILS = [
 export const isOwnerEmail = (email?: string | null) =>
   !!email && OWNER_EMAILS.includes(email.trim().toLowerCase());
 
-export function getSupabase(): SupabaseClient<Database> {
-  return supabase as unknown as SupabaseClient<Database>;
+// Loosely typed: portal tables may not yet exist in the linked project's generated types.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getSupabase(): SupabaseClient<any> {
+  return supabase as unknown as SupabaseClient<any>;
 }
 
 export function friendlyError(err: unknown): string {
