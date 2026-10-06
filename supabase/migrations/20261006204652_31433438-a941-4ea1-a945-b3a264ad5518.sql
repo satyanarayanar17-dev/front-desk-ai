@@ -1,0 +1,1 @@
+revoke execute on function public.record_change_history() from anon, authenticated, public;
