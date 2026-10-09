@@ -144,7 +144,7 @@ export type CompanyInvitation = {
   company_id: string;
   email: string;
   role: "manager" | "employee";
-  status: "recorded" | "accepted";
+  status: "recorded" | "accepted" | "cancelled";
   created_by: string | null;
   created_at: string;
   accepted_user_id: string | null;

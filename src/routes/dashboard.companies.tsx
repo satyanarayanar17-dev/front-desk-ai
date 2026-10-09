@@ -148,7 +148,7 @@ function CompaniesPage() {
                 />
               </label>
               <label className="text-xs font-medium text-muted-foreground">
-                Seat limit
+                Total people (including managers)
                 <input
                   type="number"
                   min={1}

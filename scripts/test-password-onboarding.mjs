@@ -12,7 +12,7 @@ function setup(config={}) {
  createUser:async b=>{calls.push(['create',b]);return {data:{user:config.duplicate?null:{id:'new-client'}},error:config.duplicate?{}:null};},
  deleteUser:async id=>{calls.push(['delete',id]);return {error:config.cleanupFailure?{}:null};}
  }},rpc:async(name,args)=>{calls.push([name,args]);return {error:config.enrolFailure?{code:'23514'}:null};}};
- const caller={rpc:async name=>name==='get_my_password_state'?{data:!!config.pending,error:null}:{data:{is_owner:config.isOwner!==false},error:config.accessError?{}:null},from:()=>({select:()=>({eq:()=>({single:async()=>({data:{id:cid,status:config.paused?'paused':'active'},error:null})})})})};
+ const caller={rpc:async name=>name==='get_my_password_state'?{data:!!config.pending,error:null}:{data:{is_owner:config.isOwner!==false,memberships:config.manager?[{company_id:cid,role:'manager',status:config.inactive?'deactivated':'active'}]:[]},error:config.accessError?{}:null},from:()=>({select:()=>({eq:()=>({single:async()=>({data:{id:cid,status:config.paused?'paused':'active'},error:null})})})})};
  const handler=createClientLoginHandler((url,key)=>key==='server-secret'?admin:caller,key=>({SUPABASE_URL:'https://example.invalid',SUPABASE_SERVICE_ROLE_KEY:'server-secret',SUPABASE_ANON_KEY:'public-key'})[key]);
  return {calls,handler};
 }
@@ -31,5 +31,8 @@ const cleanup=await run({enrolFailure:true,cleanupFailure:true});assert.equal(cl
 const good=await run();assert.equal(good.response.status,201);assert.equal(good.body.email,'client@example.invalid');assert.match(good.body.temporaryPassword,/^[a-f0-9]{48}Aa1!$/);assert.equal(good.response.headers.get('cache-control'),'no-store');
 assert.deepEqual(good.calls[1][1],{cid,uid:'new-client',actor:'owner',member_role:'manager'});assert.equal(good.calls[0][1].email_confirm,true);assert.ok(!good.calls[0][1].user_metadata);
 const other=await run();assert.notEqual(good.body.temporaryPassword,other.body.temporaryPassword);
+const employeeBody={email:'employee@example.invalid',companyId:cid,role:'employee'};
+const managerGood=await run({isOwner:false,manager:true},employeeBody);assert.equal(managerGood.response.status,201);assert.equal(managerGood.calls[1][1].member_role,'employee');
+for(const [cfg,b] of [[{isOwner:false,manager:true},{...employeeBody,role:'manager'}],[{isOwner:false,manager:true},{...employeeBody,companyId:'22222222-0000-0000-0000-000000000002'}],[{isOwner:false,manager:true,inactive:true},employeeBody],[{isOwner:false,manager:true,pending:true},employeeBody]]){const r=await run(cfg,b);assert.equal(r.response.status,403);assert.equal(r.calls.length,0);}
 // Credentials never printed by these tests.
 console.log('Password onboarding authorization, input validation, secure credentials and compensation tests passed.');
