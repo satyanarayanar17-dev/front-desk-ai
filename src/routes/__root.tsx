@@ -162,6 +162,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  // GA4's config call logs the initial page view; only log client-side
+  // navigations, and never twice for the same path.
+  useEffect(() => {
+    const w = window as typeof window & { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void };
+    if (!w.dataLayer || typeof w.gtag !== "function") return;
+    let lastPath = router.latestLocation.pathname;
+    const unsubscribe = router.subscribe("onResolved", (event) => {
+      if (event.toLocation.pathname === lastPath) return;
+      lastPath = event.toLocation.pathname;
+      w.gtag!("event", "page_view", { page_path: event.toLocation.pathname });
+    });
+    return unsubscribe;
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>
