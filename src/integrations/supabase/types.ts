@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      call_analyses: {
+        Row: {
+          analysis: Json
+          company_id: string
+          created_by: string
+          lead_id: string
+          model: string
+          transcript: string
+          updated_at: string
+        }
+        Insert: {
+          analysis: Json
+          company_id: string
+          created_by: string
+          lead_id: string
+          model: string
+          transcript: string
+          updated_at?: string
+        }
+        Update: {
+          analysis?: Json
+          company_id?: string
+          created_by?: string
+          lead_id?: string
+          model?: string
+          transcript?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_analyses_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_analyses_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: true
+            referencedRelation: "frontdesk_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       change_history: {
         Row: {
           action: string
@@ -246,6 +291,7 @@ export type Database = {
         Row: {
           assigned_at: string | null
           assigned_by: string | null
+          assigned_employee_id: string | null
           assignment_status: string
           assistant_id: string | null
           boiler_error_code: string | null
@@ -298,6 +344,7 @@ export type Database = {
         Insert: {
           assigned_at?: string | null
           assigned_by?: string | null
+          assigned_employee_id?: string | null
           assignment_status?: string
           assistant_id?: string | null
           boiler_error_code?: string | null
@@ -350,6 +397,7 @@ export type Database = {
         Update: {
           assigned_at?: string | null
           assigned_by?: string | null
+          assigned_employee_id?: string | null
           assignment_status?: string
           assistant_id?: string | null
           boiler_error_code?: string | null
@@ -525,7 +573,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      enrol_password_client: {
+        Args: {
+          actor: string
+          cid: string
+          member_role: Database["public"]["Enums"]["app_role"]
+          uid: string
+        }
+        Returns: undefined
+      }
+      get_my_password_state: { Args: never; Returns: boolean }
       get_my_portal_access: { Args: never; Returns: Json }
+      reserve_transcript_analysis: { Args: { cid: string }; Returns: undefined }
     }
     Enums: {
       app_role: "platform_owner" | "manager" | "employee"

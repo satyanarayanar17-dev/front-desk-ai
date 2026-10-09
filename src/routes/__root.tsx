@@ -10,6 +10,13 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+declare global {
+  interface Window {
+    dataLayer: unknown[];
+    gtag: (...args: unknown[]) => void;
+  }
+}
+
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PageTransition } from "../components/PageTransition";
@@ -96,6 +103,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    scripts: [
+      {
+        type: "text/javascript",
+        src: "https://www.googletagmanager.com/gtag/js?id=G-YR7KSZ6ZEP",
+        async: true,
+      },
+      {
+        type: "text/javascript",
+        children: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-YR7KSZ6ZEP');
+        `,
+      },
+    ],
     links: [
       {
         rel: "stylesheet",
@@ -139,6 +162,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  // GA4's config call logs the initial page view; only log client-side
+  // navigations, and never twice for the same path.
+  useEffect(() => {
+    const w = window as typeof window & { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void };
+    if (!w.dataLayer || typeof w.gtag !== "function") return;
+    let lastPath = router.latestLocation.pathname;
+    const unsubscribe = router.subscribe("onResolved", (event) => {
+      if (event.toLocation.pathname === lastPath) return;
+      lastPath = event.toLocation.pathname;
+      w.gtag!("event", "page_view", { page_path: event.toLocation.pathname });
+    });
+    return unsubscribe;
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>
