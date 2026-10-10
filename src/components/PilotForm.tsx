@@ -43,7 +43,7 @@ function validate(fields: Fields, kind: "pilot" | "demo"): Errors {
   else if (!EMAIL_RE.test(fields.email.trim())) errors.email = "That email doesn't look right.";
   if (!fields.phone.trim()) errors.phone = "Please enter a phone number.";
   else if (!PHONE_RE.test(fields.phone.trim())) errors.phone = "That phone number doesn't look right.";
-  if (kind === "demo" && !fields.vertical) errors.vertical = "Please choose Dental or Trades.";
+  if (kind === "demo" && !fields.vertical) errors.vertical = "Please choose Dental or Local Services.";
   if (kind === "pilot" && !fields.city.trim()) errors.city = "Please enter your town or city.";
   if (fields.website.trim() && !URL_RE.test(fields.website.trim()))
     errors.website = "That website address doesn't look right.";
@@ -98,7 +98,7 @@ export function PilotForm({ source = "home", buttonText = "Start a 7-day pilot",
       setSubmitError(friendlyError(error));
       return;
     }
-    setSubmitted(true);
+    window.location.assign("/thank-you");
   };
 
   if (submitted) {
@@ -247,7 +247,7 @@ export function PilotForm({ source = "home", buttonText = "Start a 7-day pilot",
           <select id="vertical" className={inputClass} value={fields.vertical} onChange={(e) => set("vertical")(e.target.value)} aria-invalid={Boolean(errors.vertical)} aria-describedby={errors.vertical ? "vertical-error" : undefined}>
             <option value="">Select one</option>
             <option value="dental">Dental</option>
-            <option value="trades">Trades</option>
+            <option value="trades">Local services</option>
           </select>
           {errors.vertical && (<p id="vertical-error" className={errorClass} role="alert">{errors.vertical}</p>)}
         </div>

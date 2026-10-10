@@ -21,6 +21,7 @@ import { Route as ManagerRouteRouteImport } from './routes/manager/route'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as TradesRouteImport } from './routes/trades'
 import { Route as ClientLoginRouteImport } from './routes/client/login'
 import { Route as DashboardCompaniesRouteImport } from './routes/dashboard.companies'
@@ -94,6 +95,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ThankYouRoute = ThankYouRouteImport.update({
+  id: '/thank-you',
+  path: '/thank-you',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TradesRoute = TradesRouteImport.update({
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/thank-you': typeof ThankYouRoute
   '/trades': typeof TradesRoute
   '/client/login': typeof ClientLoginRoute
   '/dashboard/companies': typeof DashboardCompaniesRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/thank-you': typeof ThankYouRoute
   '/trades': typeof TradesRoute
   '/client/login': typeof ClientLoginRoute
   '/dashboard/companies': typeof DashboardCompaniesRoute
@@ -235,6 +243,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/thank-you': typeof ThankYouRoute
   '/trades': typeof TradesRoute
   '/client/login': typeof ClientLoginRoute
   '/dashboard/companies': typeof DashboardCompaniesRoute
@@ -265,6 +274,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/sitemap.xml'
+    | '/thank-you'
     | '/trades'
     | '/client/login'
     | '/dashboard/companies'
@@ -291,6 +301,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/sitemap.xml'
+    | '/thank-you'
     | '/trades'
     | '/client/login'
     | '/dashboard/companies'
@@ -319,6 +330,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/sitemap.xml'
+    | '/thank-you'
     | '/trades'
     | '/client/login'
     | '/dashboard/companies'
@@ -348,6 +360,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ThankYouRoute: typeof ThankYouRoute
   TradesRoute: typeof TradesRoute
   ClientLoginRoute: typeof ClientLoginRoute
   OwnerDashboardRoute: typeof OwnerDashboardRoute
@@ -439,6 +452,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/thank-you': {
+      id: '/thank-you'
+      path: '/thank-you'
+      fullPath: '/thank-you'
+      preLoaderRoute: typeof ThankYouRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/trades': {
@@ -603,6 +623,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ThankYouRoute: ThankYouRoute,
   TradesRoute: TradesRoute,
   ClientLoginRoute: ClientLoginRoute,
   OwnerDashboardRoute: OwnerDashboardRoute,

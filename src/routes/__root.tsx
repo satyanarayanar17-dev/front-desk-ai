@@ -96,22 +96,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    scripts: [
-      {
-        type: "text/javascript",
-        src: "https://www.googletagmanager.com/gtag/js?id=G-YR7KSZ6ZEP",
-        async: true,
-      },
-      {
-        type: "text/javascript",
-        children: `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-YR7KSZ6ZEP');
-        `,
-      },
-    ],
     links: [
       {
         rel: "stylesheet",
@@ -143,6 +127,18 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-YR7KSZ6ZEP"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-YR7KSZ6ZEP');`,
+          }}
+        />
         <HeadContent />
       </head>
       <body>

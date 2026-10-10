@@ -4,18 +4,17 @@ import { Action, ListeningPreview, Marketing, Meta, NextSteps, RequestSection, p
 export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
   head: () => pageHead(
-    "Callwoven | AI reception for UK dental & appointment businesses",
-    "Callwoven provides reception overflow and out-of-hours call handling, answering routine questions and capturing enquiry details for your team to follow up."
+    "Callwoven | AI reception for UK dental, HVAC, plumbing & local service businesses",
+    "CallWoven answers overflow and after-hours calls, handles approved routine questions and captures clear enquiry details for your team to review, assign and follow up."
   ),
   component: Home,
 });
 
 function Home() {
-  const sectors = [
+  const sectors: Array<{ title: string; desc: string; tag?: string }> = [
     {
       title: "Private Dental Practices",
-      tag: "Primary launch segment",
-      desc: "Our primary focus: keep new-patient and routine enquiries moving while reception attends to patients in clinic.",
+      desc: "Keep new-patient and routine enquiries moving while reception attends to patients in clinic.",
     },
     {
       title: "Aesthetic Clinics & Medspas",
@@ -30,8 +29,8 @@ function Home() {
       desc: "Capture job details, callout requests, and location while engineers are on site or driving.",
     },
     {
-      title: "Electrical, Roofing & Specialist Trades",
-      desc: "Log quote requests and enquiry details safely without pulling staff off active jobs.",
+      title: "Electricians, Roofers & Locksmiths",
+      desc: "Log quote requests and enquiry details for electricians, roofers, locksmiths, pest control and more — without pulling staff off active jobs.",
     },
     {
       title: "Independent Garages & Vehicle Repair",
@@ -51,18 +50,34 @@ function Home() {
               Keep customer enquiries moving—even when your team can’t answer.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              Callwoven answers calls, handles routine questions and captures clear enquiry details for your team to follow up.
+              CallWoven answers overflow and after-hours calls, handles approved routine questions and captures clear enquiry details for your team to review, assign and follow up.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Action to="/demo">Hear Callwoven</Action>
               <Action to="/" hash="pilot" secondary>Start a 7-day pilot</Action>
             </div>
             <p className="mt-6 text-sm text-muted-foreground">
-              Built for dental practices. Ready for appointment and local service businesses.
+              Built for dental practices, HVAC, plumbing and other local service businesses.
             </p>
           </div>
           <ListeningPreview />
         </div>
+      </section>
+
+      <section aria-labelledby="callwoven-video-title" className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
+        <div className="mb-7 max-w-3xl">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand">Meet CallWoven</p>
+          <h2 id="callwoven-video-title" className="mt-4 text-3xl font-semibold sm:text-4xl">See how CallWoven keeps enquiries moving.</h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">A 30-second introduction. All text is included on screen; no sound needed.</p>
+        </div>
+        <video controls playsInline preload="none" poster="/media/callwoven-ad-poster.jpg" aria-label="CallWoven animated introduction" className="aspect-video w-full rounded-2xl border border-border bg-card shadow-sm">
+          <source src="/media/callwoven-ad.mp4" type="video/mp4" />
+          Your browser doesn’t support video. <a href="/media/callwoven-ad.mp4">Download the CallWoven introduction.</a>
+        </video>
+        <details className="mt-4 text-sm text-muted-foreground">
+          <summary className="cursor-pointer font-medium">Read the video transcript</summary>
+          <p className="mt-3 max-w-3xl leading-relaxed">Every call is an opportunity. Keep enquiries moving when reception can’t answer. CallWoven provides AI reception for overflow and after-hours calls. It handles routine questions and captures enquiry details using the information and call-handling rules you approve. Your team reviews clear summaries and contacts the caller. Hear CallWoven and discuss a 7-day pilot tailored to your business. Administrative support only; your team makes the decisions. The enquiry shown is illustrative.</p>
+        </details>
       </section>
 
       <NextSteps />
@@ -115,14 +130,14 @@ function Home() {
           </article>
           <article className="flex flex-col justify-between rounded-2xl border border-border bg-card p-7 sm:p-9">
             <div>
-              <p className="text-xs font-bold tracking-[0.14em] text-brand">CALLWOVEN TRADES</p>
+              <p className="text-xs font-bold tracking-[0.14em] text-brand">CALLWOVEN LOCAL SERVICES</p>
               <h3 className="mt-7 text-3xl font-semibold">Customers answered while you're on the job.</h3>
               <p className="mt-4 leading-relaxed text-muted-foreground">
                 Lead details · Job requests · Priority flags · Out-of-hours calls.
               </p>
             </div>
             <div className="mt-9">
-              <Action to="/trades" secondary>Explore Trades</Action>
+              <Action to="/trades" secondary>Explore Local Services</Action>
             </div>
           </article>
         </div>
